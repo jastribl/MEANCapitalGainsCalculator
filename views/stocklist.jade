@@ -1,0 +1,33 @@
+extends layout
+
+block content
+    h1 Stock List
+    table
+        each header in ['#','Name','Number','ACB','Function']
+            th= header
+        - var num = 0
+        each stock, i in stocklist
+            - num = i
+            form(method='post', action='/deletestock')
+                tr
+                    input(name='stockname' value=stock.stockname hidden)
+                    td.center= i+'.'
+                    td
+                        a(href='/stock?stockname=#{stock.stockname}')= stock.stockname
+                    td
+                        a= stock.number
+                    td
+                        a= stock.acb
+                    td.center
+                        button.remove.center(type='submit') ✘
+        tr
+            form(method='post', action='/addstock')
+                td.input.center= ++num+'.'
+                td.input
+                    input(type='text', placeholder='Name', name='stockname', autofocus, required)
+                td.input
+                    input(type='number', step=1, min=0, placeholder='Number Of Existing Stocks', name='number', required)
+                td.input
+                    input(type='number', step='any', min=0, placeholder='Adjusted Cost Base (Total)', name='acb', required)
+                td.input.center
+                    button.add.center(type='submit') +

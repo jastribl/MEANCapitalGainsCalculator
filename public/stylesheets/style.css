@@ -1,0 +1,97 @@
+body {
+    font: 16px "Lucida Grande", Helvetica, Arial, sans-serif;
+    background-color: #33ADEC;
+    width: 70%;
+    margin: 0 auto;
+}
+
+body.entrieslist {
+    width: 90%;
+}
+
+a {
+    color: inherit;
+}
+
+table, th, td {
+    border: 2px solid #000000;
+    border-collapse: collapse;
+    color: #FFFFF2;
+}
+
+table {
+    width: 100%;
+}
+
+th {
+    height: 40px;
+    text-align: center;
+    background-color: #252525;
+}
+
+.center {
+    text-align: center;
+}
+
+tr {
+    height: 30px;
+    background-color: #696969;
+}
+
+td {
+    padding-left: 2px;
+    padding-right: 2px;
+}
+
+.input {
+    background-color: #3B3B3B;
+    color: #00FF12;
+    padding-left: inherit;
+    padding-right: inherit;
+}
+
+select, option {
+    cursor: pointer;
+    font-size: inherit;
+    border: 0px;
+}
+
+input {
+    width: 95%;
+    font-size: inherit;
+    background-color: inherit;
+    color: inherit;
+    border: 0px;
+}
+
+button {
+    width: 100%;
+    color: #000000;
+    border-width: 3px;
+    border-radius: 10px;
+    border-color: #000000;
+    font-size: inherit;
+    cursor: pointer;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+span.tableCells {
+    display: table-cell;
+}
+
+button:hover, button.input:hover {
+    color: #4A4A4A;
+}
+
+button.remove {
+    background-color: #C24444;
+}
+
+button.add {
+    background-color: #96F198;
+}
+
+button.edit {
+    background-color: #3AE6FF;
+}

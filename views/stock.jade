@@ -1,0 +1,119 @@
+extends layout
+
+block content
+    p
+    body.entrieslist
+        h1= entries.stockname
+        table
+            each header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']
+                th= header
+            each entry, i in entries
+                if editId == entry._id
+                    tr
+                        form(method='post', action='/editentry')
+                            input(name='stockname' value=entries.stockname hidden)
+                            input(name='_id' value=entry._id hidden)
+                            td.input
+                                select.input(name='year', value=liveEditEntry.year, required)
+                                    - var now = parseInt(new Date().getFullYear())
+                                    - var set = parseInt(liveEditEntry.year)
+                                    - var year = now + 1
+                                    while year >= 2000
+                                        option.input(value=year, selected=year===set)= year--
+                            td.input
+                                select.input(name='month', required)
+                                    - var set = parseInt(liveEditEntry.month)
+                                    - var month = 1
+                                    while month <= 12
+                                        option.input(value=month, selected=month===set)= month++
+                            td.input
+                                select.input(name='day', required)
+                                    - var set = parseInt(liveEditEntry.day)
+                                    - var day = 1
+                                    while day <= 31
+                                        option.input(value=day, selected=day===set)= day++
+                            td.input
+                                input(type='number', step=1, min=0, name='tradenumber', value=liveEditEntry.tradenumber , required)
+                            td.input
+                                select.input(name='buysell', required)
+                                    option.input(value='buy', selected=liveEditEntry.buysell === 'buy') buy
+                                    option.input(value='sell', selected=liveEditEntry.buysell === 'sell') sell
+                            td.input
+                                input(type='number', step=1, min=1, name='quanity', value=liveEditEntry.quanity, autofocus, required)
+                            td.input
+                                input(type='number', step='any', min=0, name='price', value=liveEditEntry.price, required)
+                            td.input
+                                input(type='number', step='any', min=0, name='commission', value=liveEditEntry.commission, required)
+                            td.input
+                            td.input
+                            td.input
+                            td.input
+                            td.input
+                                div
+                                    span.tableCells
+                                        button.add(type='submit') ✓
+                                    span.tableCells
+                                        button.edit(type='submit', onclick="form.action='/canceledit'") ✘
+                else
+                    form(method='post', action='/deleteentry')
+                        input(name='stockname', value=entries.stockname, hidden)
+                        input(name='_id', value=entry._id, hidden)
+                        tr
+                            each key in ['year','month','day','tradenumber','buysell','quanity','price','commission','totalshares','acbperunit,','acbtotal','capitalgainloss']
+                                td= entry[key]
+                            td
+                                if !editId
+                                    div
+                                        span.tableCells
+                                            button.edit(type='submit', onclick="form.action='/editmode'") E
+                                        span.tableCells
+                                            button.remove(type='submit') ✘
+            if !editId
+                tr
+                    form(method='post', action='/addentry')
+                        input(name='stockname' value=entries.stockname hidden)
+                        td.input
+                            select.input(name='year', value=liveEditEntry.year, autofocus=liveEditEntry.year, required)
+                                - var now = parseInt(new Date().getFullYear())
+                                - var set = liveEditEntry.year ? parseInt(liveEditEntry.year) : now
+                                - var year = now + 1
+                                while year >= 2000
+                                    option.input(value=year, selected=year===set)= year--
+                        td.input
+                            select.input(name='month', required)
+                                - var now = parseInt(new Date().getMonth()+1)
+                                - var set = liveEditEntry.month ? parseInt(liveEditEntry.month) : now
+                                - var month = 1
+                                while month <= 12
+                                    option.input(value=month, selected=month===set)= month++
+                        td.input
+                            select.input(name='day', required)
+                                - var now = parseInt(new Date().getDate())
+                                - var set = liveEditEntry.day ? parseInt(liveEditEntry.day) : now
+                                - var day = 1
+                                while day <= 31
+                                    option.input(value=day, selected=day===set)= day++
+                        td.input
+                            input(type='number', step=1, min=0, name='tradenumber', value=liveEditEntry.tradenumber ? liveEditEntry.tradenumber:1 , required)
+                        td.input
+                            select.input(name='buysell', required)
+                                option.input(value='buy', selected=liveEditEntry.buysell !== 'sell' ? true : false) buy
+                                option.input(value='sell', selected=liveEditEntry.buysell === 'sell' ? true : false) sell
+                        td.input
+                            input(type='number', step=1, min=1, name='quanity', value=liveEditEntry.quanity ? liveEditEntry.quanity : null, autofocus=!liveEditEntry.year, required)
+                        td.input
+                            input(type='number', step='any', min=0, name='price', value=liveEditEntry.price ? liveEditEntry.price : null, required)
+                        td.input
+                            input(type='number', step='any', min=0, name='commission', value=liveEditEntry.commission ? liveEditEntry.commission : 9.99, required)
+                        td.input
+                        td.input
+                        td.input
+                        td.input
+                        td.input
+                            button.add(type='submit') ADD
+        p Back To 
+            a(href='/stocklist') Stock List
+    script.
+        if (!"#{editId}" && "#{liveEditEntry.year}") {
+            alert('You already have an entry matching this data.');
+        }
