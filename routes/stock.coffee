@@ -21,7 +21,7 @@ router.get '/stock', (req, res, next) ->
 
             collection.find { stockname: stockname }, { sort: year: 1, month: 1, day: 1, tradenumber: 1 }, (err, entries) ->
                 entries['stockname'] = stockname
-                res.render('stock', { entries, liveEditEntry, editId })
+                res.render('stock', { title: stockname, entries, liveEditEntry, editId })
                 res.end()
         else
             error = {

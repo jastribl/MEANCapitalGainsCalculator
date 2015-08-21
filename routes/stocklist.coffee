@@ -5,7 +5,7 @@ router.get '/stocklist', (req, res, next) ->
     db = req.db
     collection = db.get('stocklist')
     collection.find {}, { sort: stockname: 1 }, (err, stocklist) ->
-        res.render('stocklist', { 'stocklist': stocklist })
+        res.render('stocklist', { title: 'Stock List', 'stocklist': stocklist })
 
 router.post '/addstock', (req, res, next) ->
     db = req.db

@@ -43,6 +43,7 @@
         }, function(err, entries) {
           entries['stockname'] = stockname;
           res.render('stock', {
+            title: stockname,
             entries: entries,
             liveEditEntry: liveEditEntry,
             editId: editId

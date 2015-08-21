@@ -16,6 +16,7 @@
       }
     }, function(err, stocklist) {
       return res.render('stocklist', {
+        title: 'Stock List',
         'stocklist': stocklist
       });
     });
