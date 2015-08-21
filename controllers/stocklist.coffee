@@ -1,14 +1,13 @@
 express = require('express')
-router = express.Router()
+controller = express.Router()
+db = require('../models/DB')
 
-router.get '/stocklist', (req, res, next) ->
-    db = req.db
+controller.get '/stocklist', (req, res) ->
     collection = db.get('stocklist')
     collection.find {}, { sort: stockname: 1 }, (err, stocklist) ->
         res.render('stocklist', { title: 'Stock List', 'stocklist': stocklist })
 
-router.post '/addstock', (req, res, next) ->
-    db = req.db
+controller.post '/addstock', (req, res) ->
     stock = req.body
     stock.stockname = stock.stockname.toUpperCase()
     collection = db.get('stocklist')
@@ -19,12 +18,11 @@ router.post '/addstock', (req, res, next) ->
             collection.insert(stock)
     res.redirect('stocklist')
 
-router.post '/deletestock', (req, res, next) ->
-    db = req.db
+controller.post '/deletestock', (req, res) ->
     stockname = req.body.stockname
     collection = db.get('stocklist')
     collection.remove { stockname: stockname }, (err) ->
         res.send 'There was a problem deleting the information to the database.' if err
         res.redirect('stocklist')
 
-module.exports = router
+module.exports = controller

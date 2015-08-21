@@ -4,13 +4,8 @@ bodyParser = require('body-parser')
 
 # New Code
 mongo = require('mongodb')
-monk = require('monk')
 
-db = monk('localhost:27017/StockApplication')
-
-routes = require('./routes/index')
-stocklist = require('./routes/stocklist')
-stock = require('./routes/stock')
+controller = require('./controllers/index')
 
 app = express()
 
@@ -23,14 +18,7 @@ app.use(bodyParser.urlencoded(extended: false))
 app.use(express.static('public'))
 
 
-# Make our db accessible to our router
-app.use (req, res, next) ->
-    req.db = db
-    next()
-
-app.use(stocklist)
-app.use(stock)
-app.use(routes)
+app.use(controller)
 
 # catch 404 and forward to error handler
 app.use (req, res, next) ->
