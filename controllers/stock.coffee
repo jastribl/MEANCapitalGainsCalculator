@@ -1,25 +1,26 @@
 express = require('express')
 controller = express.Router()
-url = require('url')
 db = require('../models/DB')
+Entries = require('../models/Entries')
+StockList = require('../models/StockList')
 
 controller.get '/stock', (req, res) ->
 
+
     query = req.query
     stockname = query.stockname
-    db.get('stocklist').count({ stockname: stockname }).then (count) ->
+    StockList.getNumberOfStocksWithName(stockname).then (count) ->
         if count > 0
-            collection = db.get('entries')
             liveEditEntry = null
             if query.edit
                 editId = query._id
-                collection.findOne { _id: query._id }, (err, entry) ->
+                Entries.getEntryById(query._id).then (entry) ->
                     liveEditEntry = entry
             else
                 editId = false
                 liveEditEntry = query
 
-            collection.find { stockname: stockname }, { sort: year: 1, month: 1, day: 1, tradenumber: 1 }, (err, entries) ->
+            Entries.getOrderedEntriesForStockWithName(stockname).then (entries) ->
                 entries['stockname'] = stockname
                 res.render('stock', { title: stockname, entries, liveEditEntry, editId })
         else
@@ -33,9 +34,7 @@ controller.get '/stock', (req, res) ->
 controller.post '/addentry', (req, res) ->
     entry = req.body
 
-    collection = db.get('entries')
-
-    getEntryCountMatchingData(collection, entry).then (count) ->
+    Entries.getEntryCountMatchingData(entry).then (count) ->
         if count == 0
             insertAndReCalculate(db, entry)
             res.redirect('/stock?stockname=' + entry.stockname)
@@ -52,11 +51,9 @@ controller.post '/editmode', (req, res) ->
 controller.post '/editentry', (req, res) ->
     entry = req.body
 
-    collection = db.get('entries')
-
-    collection.remove { _id: entry._id }, (err) ->
+    Entries.removeEntryById(entry._id).then (err) ->
         res.send 'There was a problem deleting the information to the database.' if err
-    getEntryCountMatchingData(collection, entry).then (count) ->
+    Entries.getEntryCountMatchingData(entry).then (count) ->
         insertAndReCalculate(db, entry)
         if count == 0
             res.redirect('/stock?stockname=' + entry.stockname)
@@ -70,16 +67,12 @@ controller.post '/canceledit', (req, res) ->
 controller.post '/deleteentry', (req, res) ->
     entry = req.body
 
-    collection = db.get('entries')
-    collection.remove { _id: entry._id }, (err) ->
+    Entries.removeEntryById(entry._id).then (err) ->
         res.send 'There was a problem deleting the information to the database.' if err
     res.redirect('stock?stockname=' + entry.stockname)
 
 module.exports = controller
 
-
-getEntryCountMatchingData = (entriesCollection, entry) ->
-    entriesCollection.count(stockname: entry.stockname, year: entry.year, month: entry.month, day: entry.day, tradenumber: entry.tradenumber)
 
 insertAndReCalculate = (db, newEntry) ->
     entriesCollection = db.get('entries')

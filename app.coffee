@@ -2,15 +2,12 @@ express = require('express')
 logger = require('morgan')
 bodyParser = require('body-parser')
 
-# New Code
-mongo = require('mongodb')
 
 controller = require('./controllers/index')
 
 app = express()
 
 # view engine setup
-app.set('views', 'views')
 app.set('view engine', 'jade')
 app.use(logger('dev'))
 app.use(bodyParser.json())
@@ -19,12 +16,6 @@ app.use(express.static('public'))
 
 
 app.use(controller)
-
-# catch 404 and forward to error handler
-app.use (req, res, next) ->
-    err = new Error('Not Found')
-    err.status = 404
-    next err
 
 
 # error handlers
