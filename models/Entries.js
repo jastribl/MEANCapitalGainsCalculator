@@ -7,6 +7,22 @@
   entriesTable = db.get('entries');
 
   Entries = {
+    getAllEntriesOrdered: function() {
+      return entriesTable.find({}, {
+        sort: {
+          stockname: 1,
+          year: 1,
+          month: 1,
+          day: 1,
+          tradenumber: 1
+        }
+      }, function(err, entries) {
+        if (err) {
+          throw err;
+        }
+        return entries;
+      });
+    },
     getEntriesForStockOrdered: function(stockname) {
       return entriesTable.find({
         stockname: stockname

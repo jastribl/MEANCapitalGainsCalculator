@@ -1,0 +1,25 @@
+extends layout
+
+block content
+    h1 Debug
+    p
+    h2 Stock List
+    table
+        each header in ['#','Name','Number','ACB']
+            th= header
+        each stock, i in stocklist
+            tr
+                td.center= i + '.'
+                td= stock.stockname
+                td= stock.number
+                td= stock.acb
+
+    p
+    h2 Entries
+    table
+        each header in ['StockName', 'Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses']
+            th= header
+        each entry, i in entries
+            tr
+                each key in ['stockname', 'year','month','day','tradenumber','buysell','quanity','price','commission','totalshares','acbperunit,','acbtotal','capitalgainloss']
+                    td= entry[key]

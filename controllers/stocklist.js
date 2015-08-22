@@ -11,10 +11,10 @@
   Entries = require('../models/Entries');
 
   controller.get('/stocklist', function(req, res) {
-    return StockList.getStockListOrdered().then(function(stockList) {
+    return StockList.getStockListOrdered().then(function(stocklist) {
       var options;
       options = {
-        stocklist: stockList,
+        stocklist: stocklist,
         liveEditStock: req.session.liveEditStock ? req.session.liveEditStock : void 0
       };
       req.session.reset();

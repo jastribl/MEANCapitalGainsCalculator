@@ -6,6 +6,11 @@ entriesTable = db.get('entries')
 
 Entries = {
 
+    getAllEntriesOrdered: ->
+        entriesTable.find {}, { sort: stockname: 1, year: 1, month: 1, day: 1, tradenumber: 1 }, (err, entries) ->
+            throw err if err
+            return entries
+
     getEntriesForStockOrdered: (stockname) ->
         entriesTable.find { stockname: stockname }, { sort: year: 1, month: 1, day: 1, tradenumber: 1 }, (err, entries) ->
             throw err if err

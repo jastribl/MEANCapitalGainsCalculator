@@ -5,24 +5,20 @@ block content
     table
         each header in ['#','Name','Number','ACB','Function']
             th= header
-        - var num = 0
         each stock, i in stocklist
-            - num = i
             form(method='post', action='/deletestock')
                 tr
                     input(name='stockname' value=stock.stockname hidden)
-                    td.center= i+'.'
+                    td.center= i + '.'
                     td
                         a(href='/stock?stockname=#{stock.stockname}')= stock.stockname
-                    td
-                        a= stock.number
-                    td
-                        a= stock.acb
+                    td= stock.number
+                    td= stock.acb
                     td.center
                         button.remove.center(type='submit') ✘
         tr
             form(method='post', action='/addstock')
-                td.input.center= ++num+'.'
+                td.input.center= stocklist.length + '.'
                 td.input
                     input(type='text', placeholder='Name', name='stockname', value = liveEditStock ? liveEditStock.stockname : null, autofocus, required)
                 td.input

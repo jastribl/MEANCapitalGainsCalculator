@@ -3,6 +3,7 @@ controller = express.Router()
 Entries = require('../models/Entries')
 StockList = require('../models/StockList')
 
+
 controller.get '/stock', (req, res) ->
     query = req.query
     stockname = query.stockname
@@ -28,6 +29,7 @@ controller.get '/stock', (req, res) ->
             }
             res.render('error', { error })
 
+
 controller.post '/addentry', (req, res) ->
     entry = req.body
 
@@ -41,9 +43,11 @@ controller.post '/addentry', (req, res) ->
                 query += '&' + k + '=' + entry[k]
             res.redirect('/stock?' + query)
 
+
 controller.post '/editmode', (req, res) ->
     entry = req.body
     res.redirect('/stock?stockname=' + entry.stockname + '&edit=true' + '&_id=' + entry._id)
+
 
 controller.post '/editentry', (req, res) ->
     entry = req.body
@@ -56,6 +60,7 @@ controller.post '/editentry', (req, res) ->
         else
             res.redirect('stock?stockname=' + entry.stockname + '&edit=true' + '&_id=' + entry._id)
 
+
 controller.post '/canceledit', (req, res) ->
     entry = req.body
     res.redirect('stock?stockname=' + entry.stockname)
@@ -66,6 +71,7 @@ controller.post '/deleteentry', (req, res) ->
     Entries.removeEntryById(entry._id).then ->
         res.send 'There was a problem deleting the information to the database.' if err
     res.redirect('stock?stockname=' + entry.stockname)
+
 
 module.exports = controller
 
