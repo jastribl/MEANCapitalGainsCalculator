@@ -1,11 +1,18 @@
 express = require('express')
 logger = require('morgan')
 bodyParser = require('body-parser')
+session = require('client-sessions')
 
 
 controller = require('./controllers/index')
 
 app = express()
+
+app.use session({
+  cookieName: 'session'
+  secret: 'JustinStriblingsSecretString'
+  duration: 60 * 60 * 1000
+  activeDuration: 5 * 60 * 1000})
 
 # view engine setup
 app.set('view engine', 'jade')

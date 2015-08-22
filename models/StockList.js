@@ -2,14 +2,47 @@
 (function() {
   var StockList, db, stockListTable;
 
-  db = require('./DB');
+  db = require('../utilities/DB');
 
   stockListTable = db.get('stocklist');
 
   StockList = {
-    getNumberOfStocksWithName: function(stockname) {
+    getStockListOrdered: function() {
+      return stockListTable.find({}, {
+        sort: {
+          stockname: 1
+        }
+      }, function(err, stockList) {
+        if (err) {
+          throw err;
+        }
+        return stockList;
+      });
+    },
+    getStockByName: function(stockName) {
+      stockListTable.findOne();
+      return stockListTable.findOne({
+        stockname: stockName
+      }, function(err, initialValues) {
+        if (err) {
+          throw err;
+        }
+        return initialValues;
+      });
+    },
+    doesStockExit: function(stock) {
       return stockListTable.count({
-        stockname: stockname
+        'stockname': stock.stockname
+      }).then(function(count) {
+        return count !== 0;
+      });
+    },
+    addStock: function(stock) {
+      return stockListTable.insert(stock);
+    },
+    removeStock: function(stock) {
+      return stockListTable.remove({
+        stockname: stock.stockname
       });
     }
   };

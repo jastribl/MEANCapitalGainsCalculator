@@ -2,12 +2,12 @@
 (function() {
   var Entries, db, entriesTable;
 
-  db = require('./DB');
+  db = require('../utilities/DB');
 
   entriesTable = db.get('entries');
 
   Entries = {
-    getOrderedEntriesForStockWithName: function(stockname) {
+    getEntriesForStockOrdered: function(stockname) {
       return entriesTable.find({
         stockname: stockname
       }, {
@@ -38,7 +38,9 @@
       return entriesTable.remove({
         _id: _id
       }, function(err) {
-        return err;
+        if (err) {
+          throw err;
+        }
       });
     },
     getEntryCountMatchingData: function(entry) {
@@ -48,6 +50,18 @@
         month: entry.month,
         day: entry.day,
         tradenumber: entry.tradenumber
+      });
+    },
+    insertEntry: function(entry) {
+      return entriesTable.insert(entry);
+    },
+    removeAllEntriesForStockWithName: function(stockName) {
+      return entriesTable.remove({
+        stockname: stockName
+      }, function(err) {
+        if (err) {
+          throw err;
+        }
       });
     }
   };

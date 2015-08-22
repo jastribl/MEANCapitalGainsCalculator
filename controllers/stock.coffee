@@ -1,16 +1,13 @@
 express = require('express')
 controller = express.Router()
-db = require('../models/DB')
 Entries = require('../models/Entries')
 StockList = require('../models/StockList')
 
 controller.get '/stock', (req, res) ->
-
-
     query = req.query
     stockname = query.stockname
-    StockList.getNumberOfStocksWithName(stockname).then (count) ->
-        if count > 0
+    StockList.doesStockExit(query).then (stockExists) ->
+        if stockExists
             liveEditEntry = null
             if query.edit
                 editId = query._id
@@ -20,9 +17,9 @@ controller.get '/stock', (req, res) ->
                 editId = false
                 liveEditEntry = query
 
-            Entries.getOrderedEntriesForStockWithName(stockname).then (entries) ->
+            Entries.getEntriesForStockOrdered(stockname).then (entries) ->
                 entries['stockname'] = stockname
-                res.render('stock', { title: stockname, entries, liveEditEntry, editId })
+                res.render('stock', { entries, liveEditEntry, editId })
         else
             error = {
                 status: '404'
@@ -36,7 +33,7 @@ controller.post '/addentry', (req, res) ->
 
     Entries.getEntryCountMatchingData(entry).then (count) ->
         if count == 0
-            insertAndReCalculate(db, entry)
+            insertAndReCalculate(entry)
             res.redirect('/stock?stockname=' + entry.stockname)
         else
             query = ''
@@ -46,15 +43,14 @@ controller.post '/addentry', (req, res) ->
 
 controller.post '/editmode', (req, res) ->
     entry = req.body
-    res.redirect('stock?stockname=' + entry.stockname + '&edit=true' + '&_id=' + entry._id)
+    res.redirect('/stock?stockname=' + entry.stockname + '&edit=true' + '&_id=' + entry._id)
 
 controller.post '/editentry', (req, res) ->
     entry = req.body
 
-    Entries.removeEntryById(entry._id).then (err) ->
-        res.send 'There was a problem deleting the information to the database.' if err
+    Entries.removeEntryById(entry._id).then ->
     Entries.getEntryCountMatchingData(entry).then (count) ->
-        insertAndReCalculate(db, entry)
+        insertAndReCalculate(entry)
         if count == 0
             res.redirect('/stock?stockname=' + entry.stockname)
         else
@@ -67,22 +63,17 @@ controller.post '/canceledit', (req, res) ->
 controller.post '/deleteentry', (req, res) ->
     entry = req.body
 
-    Entries.removeEntryById(entry._id).then (err) ->
+    Entries.removeEntryById(entry._id).then ->
         res.send 'There was a problem deleting the information to the database.' if err
     res.redirect('stock?stockname=' + entry.stockname)
 
 module.exports = controller
 
 
-insertAndReCalculate = (db, newEntry) ->
-    entriesCollection = db.get('entries')
-    stocksCollection = db.get('stocklist')
-    entriesCollection.insert(newEntry)
-    entriesCollection.find { stockname: newEntry.stockname }, { sort: year: 1, month: 1, day: 1, tradenumber: 1 }, (err, entries) ->
-        console.log err if err
-
-        stocksCollection.findOne { stockname: newEntry.stockname }, (err, initialValues) ->
-            console.log initialValues
+insertAndReCalculate = (newEntry) ->
+    Entries.insertEntry(newEntry)
+    Entries.getEntriesForStockOrdered(newEntry.stockname).then (entries) ->
+        StockList.getStockByName(newEntry.stockname).then (initialValues) ->
             lastEntry = {
                 quanity: initialValues.number
                 totalshares: initialValues.number
@@ -90,8 +81,7 @@ insertAndReCalculate = (db, newEntry) ->
                 acbtotal: initialValues.acb
             }
             (
-                entriesCollection.remove { _id: entry._id }, (err) ->
-                    res.send 'There was a problem deleting the information to the database.' if err
+                Entries.removeEntryById(entry._id).then ->
                     if entry.buysell == 'buy'
                         entry.totalshares = lastEntry.totalshares + entry.quanity
                         entry.acbtotal = lastEntry.acbtotal + (entry.price * entry.quanity) + entry.commission
@@ -107,8 +97,6 @@ insertAndReCalculate = (db, newEntry) ->
                             entry.acbtotal = lastEntry.getACBTotal - (entry.quanity * lastEntry.acbtotal / lastEntry.totalshares)
                             entry.acbperunit = entry.acbtotal / entry.totalshares
                         entry.capitalgainloss = ((entry.price * entry.quanity) - entry.commission) - (lastEntry.acbperunit * entry.quanity)
-                    else
-                        console.log 'we have a problem'
-                    entriesCollection.insert(entry)
+                    Entries.insertEntry(entry)
                     lastEntry = entry
             ) for entry in entries
