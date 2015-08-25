@@ -27,3 +27,7 @@ block content
                     input(type='number', step='any', min=0, placeholder='Adjusted Cost Base (Total)', value = liveEditStock ? liveEditStock.acb : null, name='acb')
                 td.input.center
                     button.add.center(type='submit') +
+    script.
+        if ('#{liveEditStock}') {
+            alert('You already have this stock!');
+        }

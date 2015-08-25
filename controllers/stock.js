@@ -11,34 +11,29 @@
   StockList = require('../models/StockList');
 
   controller.get('/stock', function(req, res) {
-    var query, stockname;
-    query = req.query;
-    stockname = query.stockname;
-    return StockList.doesStockExit(query).then(function(stockExists) {
-      var editId, error, liveEditEntry;
+    var editEntry, isEdit, liveEntry, stockname;
+    stockname = req.query.stockname;
+    isEdit = req.session.editEntry;
+    liveEntry = req.session.liveEntry ? req.session.liveEntry : {};
+    editEntry = isEdit ? req.session.editEntry : {};
+    req.session.reset();
+    return StockList.doesStockWithNameExist(stockname).then(function(stockExists) {
+      var editId, error;
       if (stockExists) {
-        liveEditEntry = null;
-        if (query.edit) {
-          editId = query._id;
-          Entries.getEntryById(query._id).then(function(entry) {
-            return liveEditEntry = entry;
-          });
-        } else {
-          editId = false;
-          liveEditEntry = query;
-        }
+        editId = isEdit ? editEntry._id : false;
         return Entries.getEntriesForStockOrdered(stockname).then(function(entries) {
-          entries['stockname'] = stockname;
+          entries.stockname = stockname;
           return res.render('stock', {
             entries: entries,
-            liveEditEntry: liveEditEntry,
+            liveEntry: liveEntry,
+            editEntry: editEntry,
             editId: editId
           });
         });
       } else {
         error = {
           status: '404',
-          stack: 'You have attemped to gail access to stock ' + stockname + '\n But you do not have that stock!'
+          stack: 'You have attemped to gain access to stock \'' + stockname + '\'\n But you do not have that stock!'
         };
         return res.render('error', {
           error: error
@@ -48,58 +43,53 @@
   });
 
   controller.post('/addentry', function(req, res) {
-    var entry;
-    entry = req.body;
-    return Entries.getEntryCountMatchingData(entry).then(function(count) {
-      var query;
+    var liveEntry;
+    liveEntry = req.body;
+    return Entries.getEntryCountMatchingData(liveEntry).then(function(count) {
       if (count === 0) {
-        insertAndReCalculate(entry);
-        return res.redirect('/stock?stockname=' + entry.stockname);
+        insertAndReCalculate(liveEntry);
       } else {
-        query = '';
-        Object.keys(entry).forEach(function(k) {
-          return query += '&' + k + '=' + entry[k];
-        });
-        return res.redirect('/stock?' + query);
+        req.session.liveEntry = liveEntry;
       }
+      return res.redirect('/stock?stockname=' + liveEntry.stockname);
     });
   });
 
   controller.post('/editmode', function(req, res) {
-    var entry;
-    entry = req.body;
-    return res.redirect('/stock?stockname=' + entry.stockname + '&edit=true' + '&_id=' + entry._id);
+    var editEntry;
+    editEntry = req.body;
+    req.session.editEntry = editEntry;
+    return res.redirect('/stock?stockname=' + editEntry.stockname);
   });
 
   controller.post('/editentry', function(req, res) {
     var entry;
     entry = req.body;
-    Entries.removeEntryById(entry._id).then(function() {});
-    return Entries.getEntryCountMatchingData(entry).then(function(count) {
-      insertAndReCalculate(entry);
-      if (count === 0) {
-        return res.redirect('/stock?stockname=' + entry.stockname);
-      } else {
-        return res.redirect('stock?stockname=' + entry.stockname + '&edit=true' + '&_id=' + entry._id);
-      }
+    return Entries.removeEntry(entry).then(function() {
+      return Entries.getEntryCountMatchingData(entry).then(function(count) {
+        insertAndReCalculate(entry);
+        if (count === 0) {
+          return res.redirect('/stock?stockname=' + entry.stockname);
+        } else {
+          req.session.editEntry;
+          return res.redirect('/stock?stockname=' + entry.stockname);
+        }
+      });
     });
   });
 
   controller.post('/canceledit', function(req, res) {
-    var entry;
-    entry = req.body;
-    return res.redirect('stock?stockname=' + entry.stockname);
+    var stockname;
+    stockname = req.body.stockname;
+    return res.redirect('stock?stockname=' + stockname);
   });
 
   controller.post('/deleteentry', function(req, res) {
     var entry;
     entry = req.body;
-    Entries.removeEntryById(entry._id).then(function() {
-      if (err) {
-        return res.send('There was a problem deleting the information to the database.');
-      }
+    return Entries.removeEntry(entry).then(function() {
+      return res.redirect('stock?stockname=' + entry.stockname);
     });
-    return res.redirect('stock?stockname=' + entry.stockname);
   });
 
   module.exports = controller;
@@ -120,7 +110,7 @@
         results = [];
         for (i = 0, len = entries.length; i < len; i++) {
           entry = entries[i];
-          results.push(Entries.removeEntryById(entry._id).then(function() {
+          results.push(Entries.removeEntry(entry).then(function() {
             if (entry.buysell === 'buy') {
               entry.totalshares = lastEntry.totalshares + entry.quanity;
               entry.acbtotal = lastEntry.acbtotal + (entry.price * entry.quanity) + entry.commission;

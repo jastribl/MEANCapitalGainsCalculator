@@ -2,7 +2,6 @@ extends layout
 
 block content
     h1 Debug
-    p
     h2 Stock List
     table
         each header in ['#','Name','Number','ACB']
@@ -13,8 +12,6 @@ block content
                 td= stock.stockname
                 td= stock.number
                 td= stock.acb
-
-    p
     h2 Entries
     table
         each header in ['StockName', 'Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses']

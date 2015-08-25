@@ -20,9 +20,8 @@
       });
     },
     getStockByName: function(stockName) {
-      stockListTable.findOne();
       return stockListTable.findOne({
-        stockname: stockName
+        stockname: stockname
       }, function(err, initialValues) {
         if (err) {
           throw err;
@@ -30,9 +29,9 @@
         return initialValues;
       });
     },
-    doesStockExit: function(stock) {
+    doesStockWithNameExist: function(stockname) {
       return stockListTable.count({
-        'stockname': stock.stockname
+        'stockname': stockname
       }).then(function(count) {
         return count !== 0;
       });

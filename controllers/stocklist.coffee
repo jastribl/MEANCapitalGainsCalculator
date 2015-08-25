@@ -16,12 +16,12 @@ controller.get '/stocklist', (req, res) ->
 
 controller.post '/addstock', (req, res) ->
     stock = req.body
-    stock.stockname = stock.stockname.toUpperCase()
-    StockList.doesStockExit(stock).then (stockExists) ->
+    StockList.doesStockWithNameExist(stock.stockname.toUpperCase()).then (stockExists) ->
         if stockExists
             req.session.liveEditStock = stock
             res.redirect('/stocklist')
         else
+            stock.stockname = stock.stockname.toUpperCase()
             stock.number = 0 if not stock.number
             stock.acb = 0 if not stock.acb
             StockList.addStock(stock)

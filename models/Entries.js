@@ -40,19 +40,13 @@
         return entries;
       });
     },
-    getEntryById: function(_id) {
-      return entriesTable.findOne({
-        _id: _id
-      }, function(err, entry) {
-        if (err) {
-          throw err;
-        }
-        return entry;
-      });
-    },
-    removeEntryById: function(_id) {
+    removeEntry: function(entry) {
       return entriesTable.remove({
-        _id: _id
+        stockname: entry.stockname,
+        year: entry.year,
+        month: entry.month,
+        day: entry.day,
+        tradenumber: entry.tradenumber
       }, function(err) {
         if (err) {
           throw err;

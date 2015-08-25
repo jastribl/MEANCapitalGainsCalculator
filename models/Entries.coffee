@@ -16,13 +16,13 @@ Entries = {
             throw err if err
             return entries
 
-    getEntryById: (_id) ->
-        entriesTable.findOne { _id: _id }, (err, entry) ->
-            throw err if err
-            return entry
+    # getEntryById: (_id) ->
+    #     entriesTable.findOne { _id: _id }, (err, entry) ->
+    #         throw err if err
+    #         return entry
 
-    removeEntryById: (_id) ->
-        entriesTable.remove { _id: _id }, (err) ->
+    removeEntry: (entry) ->
+        entriesTable.remove { stockname: entry.stockname, year: entry.year, month: entry.month, day: entry.day, tradenumber: entry.tradenumber }, (err) ->
             throw err if err
             return
 

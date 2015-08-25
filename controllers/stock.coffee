@@ -5,72 +5,68 @@ StockList = require('../models/StockList')
 
 
 controller.get '/stock', (req, res) ->
-    query = req.query
-    stockname = query.stockname
-    StockList.doesStockExit(query).then (stockExists) ->
+    stockname = req.query.stockname
+    isEdit = req.session.editEntry
+    liveEntry = if req.session.liveEntry then req.session.liveEntry else {}
+    editEntry = if isEdit then req.session.editEntry else {}
+    req.session.reset()
+    StockList.doesStockWithNameExist(stockname).then (stockExists) ->
         if stockExists
-            liveEditEntry = null
-            if query.edit
-                editId = query._id
-                Entries.getEntryById(query._id).then (entry) ->
-                    liveEditEntry = entry
-            else
-                editId = false
-                liveEditEntry = query
-
+            editId = if isEdit then editEntry._id else false
             Entries.getEntriesForStockOrdered(stockname).then (entries) ->
-                entries['stockname'] = stockname
-                res.render('stock', { entries, liveEditEntry, editId })
+                entries.stockname = stockname
+                res.render('stock', { entries, liveEntry, editEntry, editId })
         else
             error = {
                 status: '404'
-                stack: 'You have attemped to gail access to stock ' + stockname + '\n
+                stack: 'You have attemped to gain access to stock \'' + stockname + '\'\n
                         But you do not have that stock!'
             }
             res.render('error', { error })
 
 
 controller.post '/addentry', (req, res) ->
-    entry = req.body
-
-    Entries.getEntryCountMatchingData(entry).then (count) ->
+    liveEntry = req.body
+    Entries.getEntryCountMatchingData(liveEntry).then (count) ->
         if count == 0
-            insertAndReCalculate(entry)
-            res.redirect('/stock?stockname=' + entry.stockname)
+            insertAndReCalculate(liveEntry)
         else
-            query = ''
-            Object.keys(entry).forEach (k) ->
-                query += '&' + k + '=' + entry[k]
-            res.redirect('/stock?' + query)
+            req.session.liveEntry = liveEntry
+        res.redirect('/stock?stockname=' + liveEntry.stockname)
 
 
 controller.post '/editmode', (req, res) ->
-    entry = req.body
-    res.redirect('/stock?stockname=' + entry.stockname + '&edit=true' + '&_id=' + entry._id)
+    editEntry = req.body
+    req.session.editEntry = editEntry
+    res.redirect('/stock?stockname=' + editEntry.stockname)
 
 
 controller.post '/editentry', (req, res) ->
     entry = req.body
+    # to-do, check for conflict other than origianl entry (by _id)
+    # if no conflict, update (find out how), or jus remove and add a new on
+    # only do this if you are sure you want to ad the stock
 
-    Entries.removeEntryById(entry._id).then ->
-    Entries.getEntryCountMatchingData(entry).then (count) ->
-        insertAndReCalculate(entry)
-        if count == 0
-            res.redirect('/stock?stockname=' + entry.stockname)
-        else
-            res.redirect('stock?stockname=' + entry.stockname + '&edit=true' + '&_id=' + entry._id)
+    # not sure what to do if there is a problem with the entry (i.e. conflict)
+    Entries.removeEntry(entry).then ->
+        Entries.getEntryCountMatchingData(entry).then (count) ->
+            insertAndReCalculate(entry)
+            if count == 0
+                res.redirect('/stock?stockname=' + entry.stockname)
+            else
+                req.session.editEntry
+                res.redirect('/stock?stockname=' + entry.stockname )
 
 
 controller.post '/canceledit', (req, res) ->
-    entry = req.body
-    res.redirect('stock?stockname=' + entry.stockname)
+    stockname = req.body.stockname
+    res.redirect('stock?stockname=' + stockname)
+
 
 controller.post '/deleteentry', (req, res) ->
     entry = req.body
-
-    Entries.removeEntryById(entry._id).then ->
-        res.send 'There was a problem deleting the information to the database.' if err
-    res.redirect('stock?stockname=' + entry.stockname)
+    Entries.removeEntry(entry).then ->
+        res.redirect('stock?stockname=' + entry.stockname)
 
 
 module.exports = controller
@@ -87,7 +83,7 @@ insertAndReCalculate = (newEntry) ->
                 acbtotal: initialValues.acb
             }
             (
-                Entries.removeEntryById(entry._id).then ->
+                Entries.removeEntry(entry).then ->
                     if entry.buysell == 'buy'
                         entry.totalshares = lastEntry.totalshares + entry.quanity
                         entry.acbtotal = lastEntry.acbtotal + (entry.price * entry.quanity) + entry.commission

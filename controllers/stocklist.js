@@ -25,12 +25,12 @@
   controller.post('/addstock', function(req, res) {
     var stock;
     stock = req.body;
-    stock.stockname = stock.stockname.toUpperCase();
-    return StockList.doesStockExit(stock).then(function(stockExists) {
+    return StockList.doesStockWithNameExist(stock.stockname.toUpperCase()).then(function(stockExists) {
       if (stockExists) {
         req.session.liveEditStock = stock;
         return res.redirect('/stocklist');
       } else {
+        stock.stockname = stock.stockname.toUpperCase();
         if (!stock.number) {
           stock.number = 0;
         }
