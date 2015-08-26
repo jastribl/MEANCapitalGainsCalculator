@@ -65,15 +65,16 @@
   controller.post('/editentry', function(req, res) {
     var entry;
     entry = req.body;
-    return Entries.removeEntry(entry).then(function() {
-      return Entries.getEntryCountMatchingData(entry).then(function(count) {
-        insertAndReCalculate(entry);
-        if (count === 0) {
-          return res.redirect('/stock?stockname=' + entry.stockname);
+    return Entries.getEntryById(entry._id).then(function(oldEntry) {
+      return Entries.getEntryWithMatchingTimeData(entry).then(function(conflictEntry) {
+        if (conflictEntry && conflictEntry._id.toString() === entry._id.toString()) {
+          Entries.removeEntry(oldEntry).then(function() {
+            return insertAndReCalculate(entry);
+          });
         } else {
-          req.session.editEntry;
-          return res.redirect('/stock?stockname=' + entry.stockname);
+          req.session.editEntry = oldEntry;
         }
+        return res.redirect('/stock?stockname=' + entry.stockname);
       });
     });
   });
@@ -85,20 +86,23 @@
   });
 
   controller.post('/deleteentry', function(req, res) {
-    var entry;
+    var entry, stockname;
     entry = req.body;
+    stockname = entry.stockname;
     return Entries.removeEntry(entry).then(function() {
-      return res.redirect('stock?stockname=' + entry.stockname);
+      return res.redirect('stock?stockname=' + stockname);
     });
   });
 
   module.exports = controller;
 
   insertAndReCalculate = function(newEntry) {
+    var stockname;
     Entries.insertEntry(newEntry);
-    return Entries.getEntriesForStockOrdered(newEntry.stockname).then(function(entries) {
-      return StockList.getStockByName(newEntry.stockname).then(function(initialValues) {
-        var entry, i, lastEntry, len, ref, results;
+    stockname = newEntry.stockname;
+    return Entries.getEntriesForStockOrdered(stockname).then(function(entries) {
+      return StockList.getStockByName(stockname).then(function(initialValues) {
+        var lastEntry, ref;
         lastEntry = {
           quanity: initialValues.number,
           totalshares: initialValues.number,
@@ -107,33 +111,15 @@
           },
           acbtotal: initialValues.acb
         };
-        results = [];
-        for (i = 0, len = entries.length; i < len; i++) {
-          entry = entries[i];
-          results.push(Entries.removeEntry(entry).then(function() {
-            if (entry.buysell === 'buy') {
-              entry.totalshares = lastEntry.totalshares + entry.quanity;
-              entry.acbtotal = lastEntry.acbtotal + (entry.price * entry.quanity) + entry.commission;
-              entry.acbperunit = entry.acbtotal / entry.totalshares;
-            } else if (entry.buysell === 'sell') {
-              entry.totalshares = lastEntry.totalshares - entry.quanity;
-              if (entry.totalshares < 0) {
-                entry.problem = true;
-              }
-              if (entry.totalshares === 0) {
-                entry.acbtotal = 0;
-                entry.acbperunit = 0;
-              } else {
-                entry.acbtotal = lastEntry.getACBTotal - (entry.quanity * lastEntry.acbtotal / lastEntry.totalshares);
-                entry.acbperunit = entry.acbtotal / entry.totalshares;
-              }
-              entry.capitalgainloss = ((entry.price * entry.quanity) - entry.commission) - (lastEntry.acbperunit * entry.quanity);
-            }
-            Entries.insertEntry(entry);
-            return lastEntry = entry;
-          }));
-        }
-        return results;
+        return Entries.deleteAllEntries().then(function() {
+          var entry, i, len, results;
+          results = [];
+          for (i = 0, len = entries.length; i < len; i++) {
+            entry = entries[i];
+            results.push((entry.buysell === 'buy' ? (entry.totalshares = +lastEntry.totalshares + +entry.quanity, entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quanity) + +entry.commission, entry.acbperunit = +entry.acbtotal / +entry.totalshares) : entry.buysell === 'sell' ? (entry.totalshares = +lastEntry.totalshares - +entry.quanity, entry.totalshares < 0 ? entry.problem = true : void 0, entry.totalshares === 0 ? (entry.acbtotal = 0, entry.acbperunit = 0) : (entry.acbtotal = +lastEntry.getACBTotal - (+entry.quanity * +lastEntry.acbtotal / +lastEntry.totalshares), entry.acbperunit = +entry.acbtotal / +entry.totalshares), entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity)) : void 0, lastEntry = entry, Entries.insertEntry(entry)));
+          }
+          return results;
+        });
       });
     });
   };

@@ -7,6 +7,13 @@
   entriesTable = db.get('entries');
 
   Entries = {
+    deleteAllEntries: function() {
+      return entriesTable.remove({}, function(err) {
+        if (err) {
+          throw err;
+        }
+      });
+    },
     getAllEntriesOrdered: function() {
       return entriesTable.find({}, {
         sort: {
@@ -21,6 +28,20 @@
           throw err;
         }
         return entries;
+      });
+    },
+    getEntryWithMatchingTimeData: function(entry) {
+      return entriesTable.findOne({
+        stockname: entry.stockname,
+        year: entry.year,
+        month: entry.month,
+        day: entry.day,
+        tradenumber: entry.tradenumber
+      }, function(err, entry) {
+        if (err) {
+          throw err;
+        }
+        return entry;
       });
     },
     getEntriesForStockOrdered: function(stockname) {
@@ -38,6 +59,16 @@
           throw err;
         }
         return entries;
+      });
+    },
+    getEntryById: function(_id) {
+      return entriesTable.findOne({
+        _id: _id
+      }, function(err, entry) {
+        if (err) {
+          throw err;
+        }
+        return entry;
       });
     },
     removeEntry: function(entry) {
@@ -68,6 +99,20 @@
     removeAllEntriesForStockWithName: function(stockName) {
       return entriesTable.remove({
         stockname: stockName
+      }, function(err) {
+        if (err) {
+          throw err;
+        }
+      });
+    },
+    updateEntry: function(entry) {
+      return entriesTable.update({
+        _id: _id
+      }, {
+        totalshares: entry.totalshares,
+        acbperunit: entry.acbperunit,
+        acbtotal: entry.acbtotal,
+        capitalgainloss: entry.capitalgainloss
       }, function(err) {
         if (err) {
           throw err;

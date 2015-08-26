@@ -43,19 +43,14 @@ controller.post '/editmode', (req, res) ->
 
 controller.post '/editentry', (req, res) ->
     entry = req.body
-    # to-do, check for conflict other than origianl entry (by _id)
-    # if no conflict, update (find out how), or jus remove and add a new on
-    # only do this if you are sure you want to ad the stock
-
-    # not sure what to do if there is a problem with the entry (i.e. conflict)
-    Entries.removeEntry(entry).then ->
-        Entries.getEntryCountMatchingData(entry).then (count) ->
-            insertAndReCalculate(entry)
-            if count == 0
-                res.redirect('/stock?stockname=' + entry.stockname)
+    Entries.getEntryById(entry._id).then (oldEntry) ->
+        Entries.getEntryWithMatchingTimeData(entry).then (conflictEntry) ->
+            if conflictEntry and conflictEntry._id.toString() == entry._id.toString()
+                Entries.removeEntry(oldEntry).then ->
+                    insertAndReCalculate(entry)
             else
-                req.session.editEntry
-                res.redirect('/stock?stockname=' + entry.stockname )
+                req.session.editEntry = oldEntry
+            res.redirect('/stock?stockname=' + entry.stockname )
 
 
 controller.post '/canceledit', (req, res) ->
@@ -65,40 +60,43 @@ controller.post '/canceledit', (req, res) ->
 
 controller.post '/deleteentry', (req, res) ->
     entry = req.body
+    stockname = entry.stockname
     Entries.removeEntry(entry).then ->
-        res.redirect('stock?stockname=' + entry.stockname)
+        res.redirect('stock?stockname=' + stockname)
 
 
 module.exports = controller
 
 
+
 insertAndReCalculate = (newEntry) ->
     Entries.insertEntry(newEntry)
-    Entries.getEntriesForStockOrdered(newEntry.stockname).then (entries) ->
-        StockList.getStockByName(newEntry.stockname).then (initialValues) ->
+    stockname = newEntry.stockname
+    Entries.getEntriesForStockOrdered(stockname).then (entries) ->
+        StockList.getStockByName(stockname).then (initialValues) ->
             lastEntry = {
                 quanity: initialValues.number
                 totalshares: initialValues.number
                 acbperunit: initialValues.number == 0 ? 0 : initialValues.acb / initialValues.number
                 acbtotal: initialValues.acb
             }
-            (
-                Entries.removeEntry(entry).then ->
+            Entries.deleteAllEntries().then ->
+                (
                     if entry.buysell == 'buy'
-                        entry.totalshares = lastEntry.totalshares + entry.quanity
-                        entry.acbtotal = lastEntry.acbtotal + (entry.price * entry.quanity) + entry.commission
-                        entry.acbperunit = entry.acbtotal / entry.totalshares
+                        entry.totalshares = +lastEntry.totalshares + +entry.quanity
+                        entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quanity) + +entry.commission
+                        entry.acbperunit = +entry.acbtotal / +entry.totalshares
                     else if entry.buysell == 'sell'
-                        entry.totalshares = lastEntry.totalshares - entry.quanity
+                        entry.totalshares = +lastEntry.totalshares - +entry.quanity
                         if entry.totalshares < 0
                             entry.problem = true
                         if entry.totalshares == 0
                             entry.acbtotal = 0
                             entry.acbperunit = 0
                         else
-                            entry.acbtotal = lastEntry.getACBTotal - (entry.quanity * lastEntry.acbtotal / lastEntry.totalshares)
-                            entry.acbperunit = entry.acbtotal / entry.totalshares
-                        entry.capitalgainloss = ((entry.price * entry.quanity) - entry.commission) - (lastEntry.acbperunit * entry.quanity)
-                    Entries.insertEntry(entry)
+                            entry.acbtotal = +lastEntry.getACBTotal - (+entry.quanity * +lastEntry.acbtotal / +lastEntry.totalshares)
+                            entry.acbperunit = +entry.acbtotal / +entry.totalshares
+                        entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity)
                     lastEntry = entry
-            ) for entry in entries
+                    Entries.insertEntry(entry)
+                ) for entry in entries

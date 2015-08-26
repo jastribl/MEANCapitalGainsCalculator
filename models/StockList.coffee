@@ -11,7 +11,7 @@ StockList = {
             throw err if err
             stockList
 
-    getStockByName: (stockName) ->
+    getStockByName: (stockname) ->
         stockListTable.findOne { stockname: stockname }, (err, initialValues) ->
             throw err if err
             initialValues

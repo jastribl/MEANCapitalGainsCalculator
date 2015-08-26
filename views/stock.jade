@@ -33,13 +33,13 @@ block content
                                     while day <= 31
                                         option.input(value=day, selected=day===set)= day++
                             td.input
-                                input(type='number', step=1, min=0, name='tradenumber', value=editEntry.tradenumber , required)
+                                input(type='number', step=1, min=0, name='tradenumber', value=editEntry.tradenumber, autofocus, required)
                             td.input
                                 select.input(name='buysell', required)
                                     option.input(value='buy', selected=editEntry.buysell === 'buy') buy
                                     option.input(value='sell', selected=editEntry.buysell === 'sell') sell
                             td.input
-                                input(type='number', step=1, min=1, name='quanity', value=editEntry.quanity, autofocus, required)
+                                input(type='number', step=1, min=1, name='quanity', value=editEntry.quanity, required)
                             td.input
                                 input(type='number', step='any', min=0, name='price', value=editEntry.price, required)
                             td.input

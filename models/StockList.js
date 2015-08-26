@@ -19,7 +19,7 @@
         return stockList;
       });
     },
-    getStockByName: function(stockName) {
+    getStockByName: function(stockname) {
       return stockListTable.findOne({
         stockname: stockname
       }, function(err, initialValues) {
