@@ -46,7 +46,7 @@ controller.post '/editentry', (req, res) ->
     entry = req.body
     Entries.getEntryById(entry._id).then (oldEntry) ->
         Entries.getEntryWithMatchingTimeData(entry).then (conflictEntry) ->
-            if conflictEntry and conflictEntry._id.toString() == entry._id.toString()
+            if (conflictEntry and conflictEntry._id.toString() == entry._id.toString()) or not conflictEntry
                 Entries.removeEntry(oldEntry).then ->
                     insertAndReCalculate(entry)
             else
@@ -55,15 +55,13 @@ controller.post '/editentry', (req, res) ->
 
 
 controller.post '/canceledit', (req, res) ->
-    stockname = req.body.stockname
-    res.redirect('stock?stockname=' + stockname)
+    res.redirect('stock?stockname=' + req.body.stockname)
 
 
 controller.post '/deleteentry', (req, res) ->
     entry = req.body
-    stockname = entry.stockname
     Entries.removeEntry(entry).then ->
-        res.redirect('stock?stockname=' + stockname)
+        res.redirect('stock?stockname=' + entry.stockname)
 
 
 module.exports = controller
@@ -98,4 +96,4 @@ insertAndReCalculate = (newEntry) ->
                             entry.acbperunit = +entry.acbtotal / +entry.totalshares
                         entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity)
                     lastEntry = entry
-                    Entries.insertEntry(entry)
+                    Entries.updateEntry(entry)

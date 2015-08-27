@@ -68,7 +68,7 @@
     entry = req.body;
     return Entries.getEntryById(entry._id).then(function(oldEntry) {
       return Entries.getEntryWithMatchingTimeData(entry).then(function(conflictEntry) {
-        if (conflictEntry && conflictEntry._id.toString() === entry._id.toString()) {
+        if ((conflictEntry && conflictEntry._id.toString() === entry._id.toString()) || !conflictEntry) {
           Entries.removeEntry(oldEntry).then(function() {
             return insertAndReCalculate(entry);
           });
@@ -81,17 +81,14 @@
   });
 
   controller.post('/canceledit', function(req, res) {
-    var stockname;
-    stockname = req.body.stockname;
-    return res.redirect('stock?stockname=' + stockname);
+    return res.redirect('stock?stockname=' + req.body.stockname);
   });
 
   controller.post('/deleteentry', function(req, res) {
-    var entry, stockname;
+    var entry;
     entry = req.body;
-    stockname = entry.stockname;
     return Entries.removeEntry(entry).then(function() {
-      return res.redirect('stock?stockname=' + stockname);
+      return res.redirect('stock?stockname=' + entry.stockname);
     });
   });
 
@@ -133,7 +130,7 @@
               entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity);
             }
             lastEntry = entry;
-            return Entries.insertEntry(entry);
+            return Entries.updateEntry(entry);
           });
         });
       });
