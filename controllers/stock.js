@@ -15,8 +15,9 @@
     stockname = req.query.stockname.toUpperCase();
     isEdit = req.session.editEntry;
     liveEntry = req.session.liveEntry ? req.session.liveEntry : {};
+    req.session.liveEntry = null;
     editEntry = isEdit ? req.session.editEntry : {};
-    req.session.reset();
+    req.session.editEntry = null;
     return StockList.doesStockWithNameExist(stockname).then(function(stockExists) {
       var editId, error;
       if (stockExists) {

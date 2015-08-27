@@ -8,8 +8,9 @@ controller.get '/stock', (req, res) ->
     stockname = req.query.stockname.toUpperCase()
     isEdit = req.session.editEntry
     liveEntry = if req.session.liveEntry then req.session.liveEntry else {}
+    req.session.liveEntry = null
     editEntry = if isEdit then req.session.editEntry else {}
-    req.session.reset()
+    req.session.editEntry = null
     StockList.doesStockWithNameExist(stockname).then (stockExists) ->
         if stockExists
             editId = if isEdit then editEntry._id else false

@@ -10,7 +10,7 @@ controller.get '/stocklist', (req, res) ->
             stocklist: stocklist
             liveEditStock: req.session.liveEditStock if req.session.liveEditStock
         }
-        req.session.reset()
+        req.session.liveEditStock = null
         res.render('stocklist', options)
 
 

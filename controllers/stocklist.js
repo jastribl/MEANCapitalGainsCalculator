@@ -17,7 +17,7 @@
         stocklist: stocklist,
         liveEditStock: req.session.liveEditStock ? req.session.liveEditStock : void 0
       };
-      req.session.reset();
+      req.session.liveEditStock = null;
       return res.render('stocklist', options);
     });
   });
