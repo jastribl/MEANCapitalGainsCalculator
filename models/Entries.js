@@ -7,8 +7,10 @@
   entriesTable = db.get('entries');
 
   Entries = {
-    deleteAllEntries: function() {
-      return entriesTable.remove({}, function(err) {
+    deleteAllEntriesForStockWithName: function(stockname) {
+      return entriesTable.remove({
+        stockName: stockname
+      }, function(err) {
         if (err) {
           throw err;
         }
@@ -94,6 +96,10 @@
       });
     },
     insertEntry: function(entry) {
+      entry.year = +entry.year;
+      entry.month = +entry.month;
+      entry.day = +entry.day;
+      entry.tradenumber = +entry.tradenumber;
       return entriesTable.insert(entry);
     },
     removeAllEntriesForStockWithName: function(stockName) {

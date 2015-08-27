@@ -12,7 +12,7 @@
 
   controller.get('/stock', function(req, res) {
     var editEntry, isEdit, liveEntry, stockname;
-    stockname = req.query.stockname;
+    stockname = req.query.stockname.toUpperCase();
     isEdit = req.session.editEntry;
     liveEntry = req.session.liveEntry ? req.session.liveEntry : {};
     editEntry = isEdit ? req.session.editEntry : {};
@@ -111,14 +111,29 @@
           },
           acbtotal: initialValues.acb
         };
-        return Entries.deleteAllEntries().then(function() {
-          var entry, i, len, results;
-          results = [];
-          for (i = 0, len = entries.length; i < len; i++) {
-            entry = entries[i];
-            results.push((entry.buysell === 'buy' ? (entry.totalshares = +lastEntry.totalshares + +entry.quanity, entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quanity) + +entry.commission, entry.acbperunit = +entry.acbtotal / +entry.totalshares) : entry.buysell === 'sell' ? (entry.totalshares = +lastEntry.totalshares - +entry.quanity, entry.totalshares < 0 ? entry.problem = true : void 0, entry.totalshares === 0 ? (entry.acbtotal = 0, entry.acbperunit = 0) : (entry.acbtotal = +lastEntry.getACBTotal - (+entry.quanity * +lastEntry.acbtotal / +lastEntry.totalshares), entry.acbperunit = +entry.acbtotal / +entry.totalshares), entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity)) : void 0, lastEntry = entry, Entries.insertEntry(entry)));
-          }
-          return results;
+        return Entries.deleteAllEntriesForStockWithName(stockname).then(function() {
+          return entries.forEach(function(entry) {
+            if (entry.buysell === 'buy') {
+              entry.totalshares = +lastEntry.totalshares + +entry.quanity;
+              entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quanity) + +entry.commission;
+              entry.acbperunit = +entry.acbtotal / +entry.totalshares;
+            } else if (entry.buysell === 'sell') {
+              entry.totalshares = +lastEntry.totalshares - +entry.quanity;
+              if (entry.totalshares < 0) {
+                entry.problem = true;
+              }
+              if (entry.totalshares === 0) {
+                entry.acbtotal = 0;
+                entry.acbperunit = 0;
+              } else {
+                entry.acbtotal = +lastEntry.getACBTotal - (+entry.quanity * +lastEntry.acbtotal / +lastEntry.totalshares);
+                entry.acbperunit = +entry.acbtotal / +entry.totalshares;
+              }
+              entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity);
+            }
+            lastEntry = entry;
+            return Entries.insertEntry(entry);
+          });
         });
       });
     });

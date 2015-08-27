@@ -6,8 +6,8 @@ entriesTable = db.get('entries')
 
 Entries = {
 
-    deleteAllEntries: ->
-        entriesTable.remove {}, (err) ->
+    deleteAllEntriesForStockWithName: (stockname) ->
+        entriesTable.remove { stockName: stockname }, (err) ->
             throw err if err
             return
 
@@ -41,6 +41,10 @@ Entries = {
 
 
     insertEntry: (entry) ->
+        entry.year = +entry.year
+        entry.month = +entry.month
+        entry.day = +entry.day
+        entry.tradenumber = +entry.tradenumber
         entriesTable.insert(entry)
 
     removeAllEntriesForStockWithName: (stockName) ->

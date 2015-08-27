@@ -8,7 +8,7 @@ block content
             each header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']
                 th= header
             each entry, i in entries
-                if editId == entry._id
+                if entry._id == editId
                     tr
                         form(method='post')
                             input(name='stockname' value=entries.stockname hidden)
@@ -71,7 +71,6 @@ block content
                                             button.remove(type='submit', onclick="form.action='/deleteentry'") ✘
             if !editId
                 tr
-                    script.
                     form(method='post', action='/addentry')
                         input(name='stockname' value=entries.stockname hidden)
                         td.input
@@ -116,6 +115,4 @@ block content
         p= 'Back To '
             a(href='/stocklist') Stock List
     script.
-        if ("#{liveEntry.year}") {
-            alert('You already have an entry matching this data.');
-        }
+        if ("#{liveEntry.year}") alert('You already have an entry matching this data.')

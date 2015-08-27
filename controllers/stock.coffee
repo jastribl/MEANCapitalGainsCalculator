@@ -5,7 +5,7 @@ StockList = require('../models/StockList')
 
 
 controller.get '/stock', (req, res) ->
-    stockname = req.query.stockname
+    stockname = req.query.stockname.toUpperCase()
     isEdit = req.session.editEntry
     liveEntry = if req.session.liveEntry then req.session.liveEntry else {}
     editEntry = if isEdit then req.session.editEntry else {}
@@ -80,16 +80,15 @@ insertAndReCalculate = (newEntry) ->
                 acbperunit: initialValues.number == 0 ? 0 : initialValues.acb / initialValues.number
                 acbtotal: initialValues.acb
             }
-            Entries.deleteAllEntries().then ->
-                (
+            Entries.deleteAllEntriesForStockWithName(stockname).then ->
+                entries.forEach (entry) ->
                     if entry.buysell == 'buy'
                         entry.totalshares = +lastEntry.totalshares + +entry.quanity
                         entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quanity) + +entry.commission
                         entry.acbperunit = +entry.acbtotal / +entry.totalshares
                     else if entry.buysell == 'sell'
                         entry.totalshares = +lastEntry.totalshares - +entry.quanity
-                        if entry.totalshares < 0
-                            entry.problem = true
+                        entry.problem = true if entry.totalshares < 0
                         if entry.totalshares == 0
                             entry.acbtotal = 0
                             entry.acbperunit = 0
@@ -99,4 +98,3 @@ insertAndReCalculate = (newEntry) ->
                         entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity)
                     lastEntry = entry
                     Entries.insertEntry(entry)
-                ) for entry in entries
