@@ -7,9 +7,9 @@
   entriesTable = db.get('entries');
 
   Entries = {
-    deleteAllEntriesForStockWithName: function(stockname) {
+    deleteAllEntriesForStockWithName: function(stockName) {
       return entriesTable.remove({
-        stockName: stockname
+        stockName: stockName
       }, function(err) {
         if (err) {
           throw err;
@@ -19,11 +19,11 @@
     getAllEntriesOrdered: function() {
       return entriesTable.find({}, {
         sort: {
-          stockname: 1,
+          stockName: 1,
           year: 1,
           month: 1,
           day: 1,
-          tradenumber: 1
+          tradeNumber: 1
         }
       }, function(err, entries) {
         if (err) {
@@ -35,11 +35,11 @@
     getEntryWithMatchingTimeData: function(entry) {
       entry = cleanEntry(entry);
       return entriesTable.findOne({
-        stockname: entry.stockname,
+        stockName: entry.stockName,
         year: entry.year,
         month: entry.month,
         day: entry.day,
-        tradenumber: entry.tradenumber
+        tradeNumber: entry.tradeNumber
       }, function(err, entry) {
         if (err) {
           throw err;
@@ -47,15 +47,15 @@
         return entry;
       });
     },
-    getEntriesForStockOrdered: function(stockname) {
+    getEntriesForStockOrdered: function(stockName) {
       return entriesTable.find({
-        stockname: stockname
+        stockName: stockName
       }, {
         sort: {
           year: 1,
           month: 1,
           day: 1,
-          tradenumber: 1
+          tradeNumber: 1
         }
       }, function(err, entries) {
         if (err) {
@@ -77,11 +77,11 @@
     removeEntry: function(entry) {
       entry = cleanEntry(entry);
       return entriesTable.remove({
-        stockname: entry.stockname,
+        stockName: entry.stockName,
         year: entry.year,
         month: entry.month,
         day: entry.day,
-        tradenumber: entry.tradenumber
+        tradeNumber: entry.tradeNumber
       }, function(err) {
         if (err) {
           throw err;
@@ -91,11 +91,11 @@
     getEntryCountMatchingData: function(entry) {
       entry = cleanEntry(entry);
       return entriesTable.count({
-        stockname: entry.stockname,
+        stockName: entry.stockName,
         year: entry.year,
         month: entry.month,
         day: entry.day,
-        tradenumber: entry.tradenumber
+        tradeNumber: entry.tradeNumber
       });
     },
     insertEntry: function(entry) {
@@ -105,11 +105,11 @@
     updateEntry: function(entry) {
       entry = cleanEntry(entry);
       return entriesTable.update({
-        stockname: entry.stockname,
+        stockName: entry.stockName,
         year: entry.year,
         month: entry.month,
         day: entry.day,
-        tradenumber: entry.tradenumber
+        tradeNumber: entry.tradeNumber
       }, entry, function(err) {
         if (err) {
           throw err;
@@ -118,7 +118,7 @@
     },
     removeAllEntriesForStockWithName: function(stockName) {
       return entriesTable.remove({
-        stockname: stockName
+        stockName: stockName
       }, function(err) {
         if (err) {
           throw err;
@@ -133,7 +133,7 @@
     entry.year = +entry.year;
     entry.month = +entry.month;
     entry.day = +entry.day;
-    entry.tradenumber = +entry.tradenumber;
+    entry.tradeNumber = +entry.tradeNumber;
     return entry;
   };
 

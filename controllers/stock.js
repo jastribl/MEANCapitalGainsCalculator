@@ -11,19 +11,19 @@
   StockList = require('../models/StockList');
 
   controller.get('/stock', function(req, res) {
-    var editEntry, isEdit, liveEntry, stockname;
-    stockname = req.query.stockname.toUpperCase();
+    var editEntry, isEdit, liveEntry, stockName;
+    stockName = req.query.stockName.toUpperCase();
     isEdit = req.session.editEntry;
     liveEntry = req.session.liveEntry ? req.session.liveEntry : {};
     req.session.liveEntry = null;
     editEntry = isEdit ? req.session.editEntry : {};
     req.session.editEntry = null;
-    return StockList.doesStockWithNameExist(stockname).then(function(stockExists) {
+    return StockList.doesStockWithNameExist(stockName).then(function(stockExists) {
       var editId, error;
       if (stockExists) {
         editId = isEdit ? editEntry._id : false;
-        return Entries.getEntriesForStockOrdered(stockname).then(function(entries) {
-          entries.stockname = stockname;
+        return Entries.getEntriesForStockOrdered(stockName).then(function(entries) {
+          entries.stockName = stockName;
           return res.render('stock', {
             entries: entries,
             liveEntry: liveEntry,
@@ -34,7 +34,7 @@
       } else {
         error = {
           status: '404',
-          stack: 'You have attemped to gain access to stock \'' + stockname + '\'\n But you do not have that stock!'
+          stack: 'You have attemped to gain access to stock \'' + stockName + '\'\n But you do not have that stock!'
         };
         return res.render('error', {
           error: error
@@ -52,7 +52,7 @@
       } else {
         req.session.liveEntry = liveEntry;
       }
-      return res.redirect('/stock?stockname=' + liveEntry.stockname);
+      return res.redirect('/stock?stockName=' + liveEntry.stockName);
     });
   });
 
@@ -60,7 +60,7 @@
     var editEntry;
     editEntry = req.body;
     req.session.editEntry = editEntry;
-    return res.redirect('/stock?stockname=' + editEntry.stockname);
+    return res.redirect('/stock?stockName=' + editEntry.stockName);
   });
 
   controller.post('/editentry', function(req, res) {
@@ -75,31 +75,31 @@
         } else {
           req.session.editEntry = oldEntry;
         }
-        return res.redirect('/stock?stockname=' + entry.stockname);
+        return res.redirect('/stock?stockName=' + entry.stockName);
       });
     });
   });
 
   controller.post('/canceledit', function(req, res) {
-    return res.redirect('stock?stockname=' + req.body.stockname);
+    return res.redirect('stock?stockName=' + req.body.stockName);
   });
 
   controller.post('/deleteentry', function(req, res) {
     var entry;
     entry = req.body;
     return Entries.removeEntry(entry).then(function() {
-      return res.redirect('stock?stockname=' + entry.stockname);
+      return res.redirect('stock?stockName=' + entry.stockName);
     });
   });
 
   module.exports = controller;
 
   insertAndReCalculate = function(newEntry) {
-    var stockname;
+    var stockName;
     Entries.insertEntry(newEntry);
-    stockname = newEntry.stockname;
-    return Entries.getEntriesForStockOrdered(stockname).then(function(entries) {
-      return StockList.getStockByName(stockname).then(function(initialValues) {
+    stockName = newEntry.stockName;
+    return Entries.getEntriesForStockOrdered(stockName).then(function(entries) {
+      return StockList.getStockByName(stockName).then(function(initialValues) {
         var lastEntry, ref;
         lastEntry = {
           quanity: initialValues.number,
@@ -109,7 +109,7 @@
           },
           acbtotal: initialValues.acb
         };
-        return Entries.deleteAllEntriesForStockWithName(stockname).then(function() {
+        return Entries.deleteAllEntriesForStockWithName(stockName).then(function() {
           return entries.forEach(function(entry) {
             if (entry.buysell === 'buy') {
               entry.totalshares = +lastEntry.totalshares + +entry.quanity;

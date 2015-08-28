@@ -3,7 +3,7 @@ extends layout
 block content
     p
     body.entrieslist
-        h1= entries.stockname
+        h1= entries.stockName
         table
             each header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']
                 th= header
@@ -11,7 +11,7 @@ block content
                 if entry._id == editId
                     tr
                         form(method='post')
-                            input(name='stockname' value=entries.stockname hidden)
+                            input(name='stockName' value=entries.stockName hidden)
                             input(name='_id' value=entry._id hidden)
                             td.input
                                 select.input(name='year', value=editEntry.year, required)
@@ -33,7 +33,7 @@ block content
                                     while day <= 31
                                         option.input(value=day, selected=day===set)= day++
                             td.input
-                                input(type='number', step=1, min=1, name='tradenumber', value=editEntry.tradenumber, autofocus, required)
+                                input(type='number', step=1, min=1, name='tradeNumber', value=editEntry.tradeNumber, autofocus, required)
                             td.input
                                 select.input(name='buysell', required)
                                     option.input(value='buy', selected=editEntry.buysell === 'buy') buy
@@ -56,10 +56,10 @@ block content
                                         button.edit(type='submit', onclick="form.action='/canceledit'") ✘
                 else
                     form(method='post')
-                        input(name='stockname', value=entries.stockname, hidden)
+                        input(name='stockName', value=entries.stockName, hidden)
                         input(name='_id', value=entry._id, hidden)
                         tr
-                            each key in ['year','month','day','tradenumber','buysell','quanity','price','commission','totalshares','acbperunit','acbtotal','capitalgainloss']
+                            each key in ['year','month','day','tradeNumber','buysell','quanity','price','commission','totalshares','acbperunit','acbtotal','capitalgainloss']
                                 td= entry[key]
                                 input(name=key, value=entry[key], hidden)
                             td
@@ -72,7 +72,7 @@ block content
             if !editId
                 tr
                     form(method='post', action='/addentry')
-                        input(name='stockname' value=entries.stockname hidden)
+                        input(name='stockName' value=entries.stockName hidden)
                         td.input
                             select.input(name='year', value=liveEntry.year, required)
                                 - var now=parseInt(new Date().getFullYear())
@@ -95,7 +95,7 @@ block content
                                 while day <= 31
                                     option.input(value=day, selected=day===set)= day++
                         td.input
-                            input(type='number', step=1, min=1, name='tradenumber', value=liveEntry.tradenumber ? liveEntry.tradenumber:1, autofocus=liveEntry.year, required)
+                            input(type='number', step=1, min=1, name='tradeNumber', value=liveEntry.tradeNumber ? liveEntry.tradeNumber:1, autofocus=liveEntry.year, required)
                         td.input
                             select.input(name='buysell', required)
                                 option.input(value='buy', selected=liveEntry.buysell !== 'sell' ? true : false) buy

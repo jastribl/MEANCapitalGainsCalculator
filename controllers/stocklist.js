@@ -25,12 +25,12 @@
   controller.post('/addstock', function(req, res) {
     var stock;
     stock = req.body;
-    return StockList.doesStockWithNameExist(stock.stockname.toUpperCase()).then(function(stockExists) {
+    return StockList.doesStockWithNameExist(stock.stockName.toUpperCase()).then(function(stockExists) {
       if (stockExists) {
         req.session.liveEditStock = stock;
         return res.redirect('/stocklist');
       } else {
-        stock.stockname = stock.stockname.toUpperCase();
+        stock.stockName = stock.stockName.toUpperCase();
         if (!stock.number) {
           stock.number = 0;
         }
@@ -46,7 +46,7 @@
   controller.post('/deletestock', function(req, res) {
     var stock;
     stock = req.body;
-    return Entries.removeAllEntriesForStockWithName(stock.stockname).then(function() {
+    return Entries.removeAllEntriesForStockWithName(stock.stockName).then(function() {
       StockList.removeStock(stock).then(function() {});
       return res.redirect('/stocklist');
     });

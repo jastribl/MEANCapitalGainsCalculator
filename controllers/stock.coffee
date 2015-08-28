@@ -5,22 +5,22 @@ StockList = require('../models/StockList')
 
 
 controller.get '/stock', (req, res) ->
-    stockname = req.query.stockname.toUpperCase()
+    stockName = req.query.stockName.toUpperCase()
     isEdit = req.session.editEntry
     liveEntry = if req.session.liveEntry then req.session.liveEntry else {}
     req.session.liveEntry = null
     editEntry = if isEdit then req.session.editEntry else {}
     req.session.editEntry = null
-    StockList.doesStockWithNameExist(stockname).then (stockExists) ->
+    StockList.doesStockWithNameExist(stockName).then (stockExists) ->
         if stockExists
             editId = if isEdit then editEntry._id else false
-            Entries.getEntriesForStockOrdered(stockname).then (entries) ->
-                entries.stockname = stockname
+            Entries.getEntriesForStockOrdered(stockName).then (entries) ->
+                entries.stockName = stockName
                 res.render('stock', { entries, liveEntry, editEntry, editId })
         else
             error = {
                 status: '404'
-                stack: 'You have attemped to gain access to stock \'' + stockname + '\'\n
+                stack: 'You have attemped to gain access to stock \'' + stockName + '\'\n
                         But you do not have that stock!'
             }
             res.render('error', { error })
@@ -33,13 +33,13 @@ controller.post '/addentry', (req, res) ->
             insertAndReCalculate(liveEntry)
         else
             req.session.liveEntry = liveEntry
-        res.redirect('/stock?stockname=' + liveEntry.stockname)
+        res.redirect('/stock?stockName=' + liveEntry.stockName)
 
 
 controller.post '/editmode', (req, res) ->
     editEntry = req.body
     req.session.editEntry = editEntry
-    res.redirect('/stock?stockname=' + editEntry.stockname)
+    res.redirect('/stock?stockName=' + editEntry.stockName)
 
 
 controller.post '/editentry', (req, res) ->
@@ -51,17 +51,17 @@ controller.post '/editentry', (req, res) ->
                     insertAndReCalculate(entry)
             else
                 req.session.editEntry = oldEntry
-            res.redirect('/stock?stockname=' + entry.stockname )
+            res.redirect('/stock?stockName=' + entry.stockName )
 
 
 controller.post '/canceledit', (req, res) ->
-    res.redirect('stock?stockname=' + req.body.stockname)
+    res.redirect('stock?stockName=' + req.body.stockName)
 
 
 controller.post '/deleteentry', (req, res) ->
     entry = req.body
     Entries.removeEntry(entry).then ->
-        res.redirect('stock?stockname=' + entry.stockname)
+        res.redirect('stock?stockName=' + entry.stockName)
 
 
 module.exports = controller
@@ -70,16 +70,16 @@ module.exports = controller
 
 insertAndReCalculate = (newEntry) ->
     Entries.insertEntry(newEntry)
-    stockname = newEntry.stockname
-    Entries.getEntriesForStockOrdered(stockname).then (entries) ->
-        StockList.getStockByName(stockname).then (initialValues) ->
+    stockName = newEntry.stockName
+    Entries.getEntriesForStockOrdered(stockName).then (entries) ->
+        StockList.getStockByName(stockName).then (initialValues) ->
             lastEntry = {
                 quanity: initialValues.number
                 totalshares: initialValues.number
                 acbperunit: initialValues.number == 0 ? 0 : initialValues.acb / initialValues.number
                 acbtotal: initialValues.acb
             }
-            Entries.deleteAllEntriesForStockWithName(stockname).then ->
+            Entries.deleteAllEntriesForStockWithName(stockName).then ->
                 entries.forEach (entry) ->
                     if entry.buysell == 'buy'
                         entry.totalshares = +lastEntry.totalshares + +entry.quanity

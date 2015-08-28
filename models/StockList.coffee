@@ -7,24 +7,24 @@ stockListTable = db.get('stocklist')
 StockList = {
 
     getStockListOrdered: ->
-        stockListTable.find {}, { sort: stockname: 1 }, (err, stockList) ->
+        stockListTable.find {}, { sort: stockName: 1 }, (err, stockList) ->
             throw err if err
             stockList
 
-    getStockByName: (stockname) ->
-        stockListTable.findOne { stockname: stockname }, (err, initialValues) ->
+    getStockByName: (stockName) ->
+        stockListTable.findOne { stockName: stockName }, (err, initialValues) ->
             throw err if err
             initialValues
 
-    doesStockWithNameExist: (stockname) ->
-        stockListTable.count('stockname': stockname).then (count) ->
+    doesStockWithNameExist: (stockName) ->
+        stockListTable.count('stockName': stockName).then (count) ->
             count != 0
 
     addStock: (stock) ->
         stockListTable.insert(stock)
 
     removeStock: (stock) ->
-        stockListTable.remove({ stockname: stock.stockname })
+        stockListTable.remove({ stockName: stock.stockName })
 
 }
 

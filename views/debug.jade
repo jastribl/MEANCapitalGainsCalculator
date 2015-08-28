@@ -9,7 +9,7 @@ block content
         each stock, i in stocklist
             tr
                 td.center= i + '.'
-                td= stock.stockname
+                td= stock.stockName
                 td= stock.number
                 td= stock.acb
     h2 Entries
@@ -18,5 +18,5 @@ block content
             th= header
         each entry, i in entries
             tr
-                each key in ['stockname', 'year','month','day','tradenumber','buysell','quanity','price','commission','totalshares','acbperunit,','acbtotal','capitalgainloss']
+                each key in ['stockName', 'year','month','day','tradeNumber','buysell','quanity','price','commission','totalshares','acbperunit,','acbtotal','capitalgainloss']
                     td= entry[key]

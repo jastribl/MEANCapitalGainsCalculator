@@ -10,7 +10,7 @@
     getStockListOrdered: function() {
       return stockListTable.find({}, {
         sort: {
-          stockname: 1
+          stockName: 1
         }
       }, function(err, stockList) {
         if (err) {
@@ -19,9 +19,9 @@
         return stockList;
       });
     },
-    getStockByName: function(stockname) {
+    getStockByName: function(stockName) {
       return stockListTable.findOne({
-        stockname: stockname
+        stockName: stockName
       }, function(err, initialValues) {
         if (err) {
           throw err;
@@ -29,9 +29,9 @@
         return initialValues;
       });
     },
-    doesStockWithNameExist: function(stockname) {
+    doesStockWithNameExist: function(stockName) {
       return stockListTable.count({
-        'stockname': stockname
+        'stockName': stockName
       }).then(function(count) {
         return count !== 0;
       });
@@ -41,7 +41,7 @@
     },
     removeStock: function(stock) {
       return stockListTable.remove({
-        stockname: stock.stockname
+        stockName: stock.stockName
       });
     }
   };

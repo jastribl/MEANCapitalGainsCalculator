@@ -5,23 +5,23 @@ entriesTable = db.get('entries')
 
 Entries = {
 
-    deleteAllEntriesForStockWithName: (stockname) ->
-        entriesTable.remove { stockName: stockname }, (err) ->
+    deleteAllEntriesForStockWithName: (stockName) ->
+        entriesTable.remove { stockName: stockName }, (err) ->
             throw err if err
 
     getAllEntriesOrdered: ->
-        entriesTable.find {}, { sort: stockname: 1, year: 1, month: 1, day: 1, tradenumber: 1 }, (err, entries) ->
+        entriesTable.find {}, { sort: stockName: 1, year: 1, month: 1, day: 1, tradeNumber: 1 }, (err, entries) ->
             throw err if err
             entries
 
     getEntryWithMatchingTimeData: (entry) ->
         entry = cleanEntry(entry)
-        entriesTable.findOne {stockname: entry.stockname, year: entry.year, month: entry.month, day: entry.day, tradenumber: entry.tradenumber}, (err, entry) ->
+        entriesTable.findOne {stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber}, (err, entry) ->
             throw err if err
             entry
 
-    getEntriesForStockOrdered: (stockname) ->
-        entriesTable.find { stockname: stockname }, { sort: year: 1, month: 1, day: 1, tradenumber: 1 }, (err, entries) ->
+    getEntriesForStockOrdered: (stockName) ->
+        entriesTable.find { stockName: stockName }, { sort: year: 1, month: 1, day: 1, tradeNumber: 1 }, (err, entries) ->
             throw err if err
             entries
 
@@ -32,12 +32,12 @@ Entries = {
 
     removeEntry: (entry) ->
         entry = cleanEntry(entry)
-        entriesTable.remove { stockname: entry.stockname, year: entry.year, month: entry.month, day: entry.day, tradenumber: entry.tradenumber }, (err) ->
+        entriesTable.remove { stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber }, (err) ->
             throw err if err
 
     getEntryCountMatchingData: (entry) ->
         entry = cleanEntry(entry)
-        entriesTable.count(stockname: entry.stockname, year: entry.year, month: entry.month, day: entry.day, tradenumber: entry.tradenumber)
+        entriesTable.count(stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber)
 
 
     insertEntry: (entry) ->
@@ -46,11 +46,11 @@ Entries = {
 
     updateEntry: (entry) ->
         entry = cleanEntry(entry)
-        entriesTable.update {stockname: entry.stockname, year: entry.year, month: entry.month, day: entry.day, tradenumber: entry.tradenumber}, entry, (err) ->
+        entriesTable.update {stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber}, entry, (err) ->
             throw err if err
 
     removeAllEntriesForStockWithName: (stockName) ->
-        entriesTable.remove {stockname: stockName}, (err) ->
+        entriesTable.remove {stockName: stockName}, (err) ->
             throw err if err
 
 }
@@ -63,5 +63,5 @@ cleanEntry = (entry) ->
     entry.year = +entry.year
     entry.month = +entry.month
     entry.day = +entry.day
-    entry.tradenumber = +entry.tradenumber
+    entry.tradeNumber = +entry.tradeNumber
     entry

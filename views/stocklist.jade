@@ -8,10 +8,10 @@ block content
         each stock, i in stocklist
             form(method='post', action='/deletestock')
                 tr
-                    input(name='stockname' value=stock.stockname hidden)
+                    input(name='stockName' value=stock.stockName hidden)
                     td.center= i + '.'
                     td
-                        a(href='/stock?stockname=#{stock.stockname}')= stock.stockname
+                        a(href='/stock?stockName=#{stock.stockName}')= stock.stockName
                     td= stock.number
                     td= stock.acb
                     td.center
@@ -20,7 +20,7 @@ block content
             form(method='post', action='/addstock')
                 td.input.center= stocklist.length + '.'
                 td.input
-                    input(type='text', placeholder='Name', name='stockname', value = liveEditStock ? liveEditStock.stockname : null, autofocus, required)
+                    input(type='text', placeholder='Name', name='stockName', value = liveEditStock ? liveEditStock.stockName : null, autofocus, required)
                 td.input
                     input(type='number', step=1, min=0, placeholder='Number Of Existing Stocks', value = liveEditStock ? liveEditStock.number : null, name='number')
                 td.input

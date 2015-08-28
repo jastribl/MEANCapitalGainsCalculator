@@ -16,12 +16,12 @@ controller.get '/stocklist', (req, res) ->
 
 controller.post '/addstock', (req, res) ->
     stock = req.body
-    StockList.doesStockWithNameExist(stock.stockname.toUpperCase()).then (stockExists) ->
+    StockList.doesStockWithNameExist(stock.stockName.toUpperCase()).then (stockExists) ->
         if stockExists
             req.session.liveEditStock = stock
             res.redirect('/stocklist')
         else
-            stock.stockname = stock.stockname.toUpperCase()
+            stock.stockName = stock.stockName.toUpperCase()
             stock.number = 0 if not stock.number
             stock.acb = 0 if not stock.acb
             StockList.addStock(stock)
@@ -30,7 +30,7 @@ controller.post '/addstock', (req, res) ->
 
 controller.post '/deletestock', (req, res) ->
     stock = req.body
-    Entries.removeAllEntriesForStockWithName(stock.stockname).then ->
+    Entries.removeAllEntriesForStockWithName(stock.stockName).then ->
         StockList.removeStock(stock).then ->
         res.redirect('/stocklist')
 
