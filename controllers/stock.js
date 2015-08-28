@@ -102,12 +102,12 @@
       return StockList.getStockByName(stockName).then(function(initialValues) {
         var lastEntry, ref;
         lastEntry = {
-          quanity: initialValues.number,
-          totalshares: initialValues.number,
-          acbperunit: (ref = initialValues.number === 0) != null ? ref : {
-            0: initialValues.acb / initialValues.number
+          quanity: +initialValues.number,
+          totalshares: +initialValues.number,
+          acbperunit: (ref = +initialValues.number === 0) != null ? ref : {
+            0: +initialValues.acb / +initialValues.number
           },
-          acbtotal: initialValues.acb
+          acbtotal: +initialValues.acb
         };
         return Entries.deleteAllEntriesForStockWithName(stockName).then(function() {
           return entries.forEach(function(entry) {

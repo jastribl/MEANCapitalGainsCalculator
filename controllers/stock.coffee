@@ -74,10 +74,10 @@ insertAndReCalculate = (newEntry) ->
     Entries.getEntriesForStockOrdered(stockName).then (entries) ->
         StockList.getStockByName(stockName).then (initialValues) ->
             lastEntry = {
-                quanity: initialValues.number
-                totalshares: initialValues.number
-                acbperunit: initialValues.number == 0 ? 0 : initialValues.acb / initialValues.number
-                acbtotal: initialValues.acb
+                quanity: +initialValues.number
+                totalshares: +initialValues.number
+                acbperunit: +initialValues.number == 0 ? 0 : +initialValues.acb / +initialValues.number
+                acbtotal: +initialValues.acb
             }
             Entries.deleteAllEntriesForStockWithName(stockName).then ->
                 entries.forEach (entry) ->
