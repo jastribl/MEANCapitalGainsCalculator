@@ -33,6 +33,8 @@
 
   app.use(express["static"]('public'));
 
+  app.use(express["static"]('node_modules/angular'));
+
   app.use(controller);
 
   if (app.get('env') === 'development') {
