@@ -30,9 +30,8 @@ Entries = {
             throw err if err
             entry
 
-    removeEntry: (entry) ->
-        entry = cleanEntry(entry)
-        entriesTable.remove { stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber }, (err) ->
+    removeEntryById: (_id) ->
+        entriesTable.remove { _id: _id }, (err) ->
             throw err if err
 
     getEntryCountMatchingData: (entry) ->

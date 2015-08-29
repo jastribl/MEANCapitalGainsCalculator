@@ -74,14 +74,9 @@
         return entry;
       });
     },
-    removeEntry: function(entry) {
-      entry = cleanEntry(entry);
+    removeEntryById: function(_id) {
       return entriesTable.remove({
-        stockName: entry.stockName,
-        year: entry.year,
-        month: entry.month,
-        day: entry.day,
-        tradeNumber: entry.tradeNumber
+        _id: _id
       }, function(err) {
         if (err) {
           throw err;

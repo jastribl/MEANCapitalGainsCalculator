@@ -37,9 +37,10 @@ controller.post '/addentry', (req, res) ->
 
 
 controller.post '/editmode', (req, res) ->
-    editEntry = req.body
-    req.session.editEntry = editEntry
-    res.redirect('/stock?stockName=' + editEntry.stockName)
+    entry = req.body
+    Entries.getEntryById(entry._id).then (editEntry) ->
+        req.session.editEntry = editEntry
+        res.redirect('/stock?stockName=' + editEntry.stockName)
 
 
 controller.post '/editentry', (req, res) ->
@@ -47,7 +48,7 @@ controller.post '/editentry', (req, res) ->
     Entries.getEntryById(entry._id).then (oldEntry) ->
         Entries.getEntryWithMatchingTimeData(entry).then (conflictEntry) ->
             if (conflictEntry and conflictEntry._id.toString() == entry._id.toString()) or not conflictEntry
-                Entries.removeEntry(oldEntry).then ->
+                Entries.removeEntryById(oldEntry._id).then ->
                     insertAndReCalculate(entry)
             else
                 req.session.editEntry = oldEntry
@@ -60,7 +61,7 @@ controller.post '/canceledit', (req, res) ->
 
 controller.post '/deleteentry', (req, res) ->
     entry = req.body
-    Entries.removeEntry(entry).then ->
+    Entries.removeEntryById(entry._id).then ->
         res.redirect('stock?stockName=' + entry.stockName)
 
 

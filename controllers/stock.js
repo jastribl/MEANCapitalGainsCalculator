@@ -57,10 +57,12 @@
   });
 
   controller.post('/editmode', function(req, res) {
-    var editEntry;
-    editEntry = req.body;
-    req.session.editEntry = editEntry;
-    return res.redirect('/stock?stockName=' + editEntry.stockName);
+    var entry;
+    entry = req.body;
+    return Entries.getEntryById(entry._id).then(function(editEntry) {
+      req.session.editEntry = editEntry;
+      return res.redirect('/stock?stockName=' + editEntry.stockName);
+    });
   });
 
   controller.post('/editentry', function(req, res) {
@@ -69,7 +71,7 @@
     return Entries.getEntryById(entry._id).then(function(oldEntry) {
       return Entries.getEntryWithMatchingTimeData(entry).then(function(conflictEntry) {
         if ((conflictEntry && conflictEntry._id.toString() === entry._id.toString()) || !conflictEntry) {
-          Entries.removeEntry(oldEntry).then(function() {
+          Entries.removeEntryById(oldEntry._id).then(function() {
             return insertAndReCalculate(entry);
           });
         } else {
@@ -87,7 +89,7 @@
   controller.post('/deleteentry', function(req, res) {
     var entry;
     entry = req.body;
-    return Entries.removeEntry(entry).then(function() {
+    return Entries.removeEntryById(entry._id).then(function() {
       return res.redirect('stock?stockName=' + entry.stockName);
     });
   });

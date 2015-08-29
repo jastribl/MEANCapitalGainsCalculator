@@ -61,7 +61,7 @@ block content
                         tr
                             each key in ['year','month','day','tradeNumber','buysell','quanity','price','commission','totalshares','acbperunit','acbtotal','capitalgainloss']
                                 td= entry[key]
-                                input(name=key, value=entry[key], hidden)
+                                //- input(name=key, value=entry[key], hidden)
                             td
                                 if !editId
                                     div
