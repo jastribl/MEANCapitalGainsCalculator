@@ -95,3 +95,10 @@ button.add {
 button.edit {
     background-color: #3AE6FF;
 }
+
+.error {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    background-color: #FF8400;
+    border-radius: 10px;
+}

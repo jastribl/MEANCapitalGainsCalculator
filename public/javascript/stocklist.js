@@ -5,17 +5,44 @@
   stockListApp = angular.module('stockListApp', []);
 
   stockListApp.controller('StockListController', function($scope, $http) {
-    $scope.updateStockList = function() {
+    var resetForm, resetNewStock, updateStockList;
+    updateStockList = function() {
       return $http.get('/api/stockList').then(function(stockList) {
         return $scope.stockList = stockList.data;
       });
     };
+    resetNewStock = function() {
+      return $scope.newStock = {
+        stockName: null,
+        number: null,
+        acb: null
+      };
+    };
+    $scope.reserError = function() {
+      return $scope.error = null;
+    };
+    resetForm = function() {
+      updateStockList();
+      resetNewStock();
+      return $scope.reserError();
+    };
     $scope.remove = function(stockName) {
       return $http["delete"]('/api/stockList?stockName=' + stockName).then(function() {
-        return $scope.updateStockList();
+        return updateStockList();
       });
     };
-    return $scope.updateStockList();
+    $scope.add = function() {
+      return $http.get('/api/stockList/stockExists?stock=' + JSON.stringify($scope.newStock)).then(function(stockExists) {
+        if (stockExists.data) {
+          return $scope.error = 'You already have this stock!';
+        } else {
+          return $http.post('/api/stockList/add?stock=' + JSON.stringify($scope.newStock)).then(function(res) {
+            return resetForm();
+          });
+        }
+      });
+    };
+    return resetForm();
   });
 
 }).call(this);

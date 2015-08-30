@@ -14,6 +14,20 @@ api.delete '/api/stockList', (req, res) ->
         Entries.deleteAllEntriesForStockWithName(stockName).then ->
             res.sendStatus(200)
 
+api.get '/api/stockList/stockExists', (req, res) ->
+    stock = JSON.parse(req.query.stock)
+    StockList.doesStockWithNameExist(stock.stockName.toUpperCase()).then (stockExists) ->
+        res.json stockExists
+
+api.post '/api/stockList/add', (req, res) ->
+    stock = JSON.parse(req.query.stock)
+    stock.stockName = stock.stockName.replace(' ', '_').toUpperCase()
+    stock.number = 0 if not stock.number
+    stock.acb = 0 if not stock.number
+    StockList.addStock(stock).then ->
+        res.sendStatus(200)
+
+
 api.get '/api/entriesList', (req, res) ->
     Entries.getAllEntriesOrdered().then (entriesList) ->
         res.json entriesList

@@ -26,6 +26,29 @@
     });
   });
 
+  api.get('/api/stockList/stockExists', function(req, res) {
+    var stock;
+    stock = JSON.parse(req.query.stock);
+    return StockList.doesStockWithNameExist(stock.stockName.toUpperCase()).then(function(stockExists) {
+      return res.json(stockExists);
+    });
+  });
+
+  api.post('/api/stockList/add', function(req, res) {
+    var stock;
+    stock = JSON.parse(req.query.stock);
+    stock.stockName = stock.stockName.replace(' ', '_').toUpperCase();
+    if (!stock.number) {
+      stock.number = 0;
+    }
+    if (!stock.number) {
+      stock.acb = 0;
+    }
+    return StockList.addStock(stock).then(function() {
+      return res.sendStatus(200);
+    });
+  });
+
   api.get('/api/entriesList', function(req, res) {
     return Entries.getAllEntriesOrdered().then(function(entriesList) {
       return res.json(entriesList);
