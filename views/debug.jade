@@ -1,22 +1,38 @@
 extends layout
 
+
 block content
-    h1 Debug
-    h2 Stock List
-    table
-        each header in ['#','Name','Number','ACB']
-            th= header
-        each stock, i in stocklist
-            tr
-                td.center= i + '.'
-                td= stock.stockName
-                td= stock.number
-                td= stock.acb
-    h2 Entries
-    table
-        each header in ['StockName', 'Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses']
-            th= header
-        each entry, i in entries
-            tr
-                each key in ['stockName', 'year','month','day','tradeNumber','buysell','quanity','price','commission','totalshares','acbperunit,','acbtotal','capitalgainloss']
-                    td= entry[key]
+    script(type='text/javascript', src='/javascripts/debug.js')
+
+    div(ng-app='debugApp')
+
+        h2 Stock List
+        div(ng-controller='StockListController')
+            table
+                each header in ['#','Name','Number','ACB']
+                    th= header
+                tr(ng-repeat='stock in stockList')
+                    td.center {{ $index + 1 }}
+                    td {{ stock.stockName }}
+                    td {{ stock.number }}
+                    td {{ stock.acb }}
+
+        h2 Entries
+        div(ng-controller='EntriesListController')
+            table
+                each header in ['StockName', 'Date','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses']
+                    th= header
+                tr(ng-repeat='entry in entriesList')
+                    td {{ entry.stockName }}
+                    td {{ entry.year }}/{{ entry.month }}/{{ entry.day }}
+                    td {{ entry.tradeNumber }}
+                    td {{ entry.buysell }}
+                    td {{ entry.quanity }}
+                    td {{ entry.price | currency }}
+                    td {{ entry.commission | currency }}
+                    td {{ entry.totalshares }}
+                    td {{ entry.acbperunit | currency }}
+                    td {{ entry.acbtotal | currency }}
+                    td {{ entry.capitalgainloss | currency }}
+    p
+        a(href='./') Home

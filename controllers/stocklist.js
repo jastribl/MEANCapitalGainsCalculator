@@ -14,6 +14,7 @@
     return StockList.getStockListOrdered().then(function(stocklist) {
       var options;
       options = {
+        title: 'Stock List',
         stocklist: stocklist,
         liveEditStock: req.session.liveEditStock ? req.session.liveEditStock : void 0
       };

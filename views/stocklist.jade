@@ -1,7 +1,6 @@
 extends layout
 
 block content
-    h1 Stock List
     table
         each header in ['#','Name','Number','ACB','Function']
             th= header
@@ -27,5 +26,7 @@ block content
                     input(type='number', step='any', min=0, placeholder='Adjusted Cost Base (Total)', value=liveEditStock ? liveEditStock.acb : null, name='acb')
                 td.input.center
                     button.add.center(type='submit') +
+    p
+        a(href='./') Home
     script.
         if ('#{liveEditStock}') alert('You already have this stock!');

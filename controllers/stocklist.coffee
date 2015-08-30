@@ -7,12 +7,12 @@ Entries = require('../models/Entries')
 controller.get '/stocklist', (req, res) ->
     StockList.getStockListOrdered().then (stocklist) ->
         options = {
+            title: 'Stock List'
             stocklist: stocklist
             liveEditStock: req.session.liveEditStock if req.session.liveEditStock
         }
         req.session.liveEditStock = null
         res.render('stocklist', options)
-
 
 controller.post '/addstock', (req, res) ->
     stock = req.body

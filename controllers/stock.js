@@ -25,6 +25,7 @@
         return Entries.getEntriesForStockOrdered(stockName).then(function(entries) {
           entries.stockName = stockName;
           return res.render('stock', {
+            title: stockName,
             entries: entries,
             liveEntry: liveEntry,
             editEntry: editEntry,

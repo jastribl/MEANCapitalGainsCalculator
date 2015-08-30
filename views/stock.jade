@@ -1,9 +1,7 @@
 extends layout
 
 block content
-    p
     body.entrieslist
-        h1= entries.stockName
         table
             each header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']
                 th= header

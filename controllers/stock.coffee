@@ -16,7 +16,7 @@ controller.get '/stock', (req, res) ->
             editId = if isEdit then editEntry._id else false
             Entries.getEntriesForStockOrdered(stockName).then (entries) ->
                 entries.stockName = stockName
-                res.render('stock', { entries, liveEntry, editEntry, editId })
+                res.render('stock', { title: stockName, entries, liveEntry, editEntry, editId })
         else
             error = {
                 status: '404'
