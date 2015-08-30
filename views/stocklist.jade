@@ -19,13 +19,13 @@ block content
                     form(ng-submit='add()')
                         td.input.center(ng-bind='stockList.length + 1')
                         td.input
-                            input(ng-model='newStock.stockName' type='text' placeholder='Name' focus-on='mainFocus' autofocus required)
+                            input(ng-model='newStock.stockName' ng-change='validate()' type='text' placeholder='Name' focus-on='mainFocus' autofocus required)
                         td.input
                             input(ng-model='newStock.number' type='number' step=1 min=0 placeholder='Number Of Existing Stocks' )
                         td.input
                             input(ng-model='newStock.acb' type='number' step='any' min=0 placeholder='Adjusted Cost Base (Total)')
                         td.input.center
-                            button.add.center(type='submit') +
-            p.error.center(ng-if='error' ng-bind='error')
+                            button.add.center(type='submit' ng-disabled='error') +
+            p.error.center(ng-show='error' ng-bind='error')
         p
         a(href='/') Home

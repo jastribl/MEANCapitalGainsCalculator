@@ -1,22 +1,22 @@
 express = require('express')
-controller = express.Router()
+router = express.Router()
 stockController = require('./stock')
 api = require('./api')
 Entries = require('../models/Entries')
 StockList = require('../models/StockList')
 
 
-controller.use(stockController)
-controller.use(api)
+router.use(stockController)
+router.use(api)
 
-controller.get '/stocklist', (req, res) ->
+router.get '/stocklist', (req, res) ->
     res.render('stocklist', { title: 'Stock List' })
 
-controller.get '/debug', (req, res) ->
+router.get '/debug', (req, res) ->
     res.render('debug', {title: 'Debug'})
 
-controller.get '*', (req, res) ->
+router.get '*', (req, res) ->
     res.render('index', {title: 'Stock Application'})
 
 
-module.exports = controller
+module.exports = router

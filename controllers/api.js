@@ -30,14 +30,19 @@
     var stock;
     stock = JSON.parse(req.query.stock);
     return StockList.doesStockWithNameExist(stock.stockName.toUpperCase()).then(function(stockExists) {
-      return res.json(stockExists);
+      var response;
+      response = {
+        stockExists: stockExists,
+        error: stockExists ? 'You already have this stock!' : void 0
+      };
+      return res.json(response);
     });
   });
 
-  api.post('/api/stockList/add', function(req, res) {
+  api.post('/api/stockList', function(req, res) {
     var stock;
     stock = JSON.parse(req.query.stock);
-    stock.stockName = stock.stockName.replace(' ', '_').toUpperCase();
+    stock.stockName = stock.stockName.toUpperCase();
     if (!stock.number) {
       stock.number = 0;
     }

@@ -5,42 +5,43 @@
   stockListApp = angular.module('stockListApp', []);
 
   stockListApp.controller('StockListController', function($scope, $http) {
-    var resetForm, resetNewStock, updateStockList;
+    var resetError, resetForm, resetNewStock, updateStockList;
     updateStockList = function() {
       return $http.get('/api/stockList').then(function(stockList) {
         return $scope.stockList = stockList.data;
       });
     };
     resetNewStock = function() {
-      return $scope.newStock = {
-        stockName: null,
-        number: null,
-        acb: null
-      };
+      return $scope.newStock = {};
     };
-    $scope.reserError = function() {
+    resetError = function() {
       return $scope.error = null;
     };
     resetForm = function() {
       updateStockList();
       resetNewStock();
-      return $scope.reserError();
+      return resetError();
     };
     $scope.remove = function(stockName) {
       return $http["delete"]('/api/stockList?stockName=' + stockName).then(function() {
-        return updateStockList();
+        updateStockList();
+        return $scope.validate();
       });
     };
     $scope.add = function() {
-      return $http.get('/api/stockList/stockExists?stock=' + JSON.stringify($scope.newStock)).then(function(stockExists) {
-        if (stockExists.data) {
-          return $scope.error = 'You already have this stock!';
-        } else {
-          return $http.post('/api/stockList/add?stock=' + JSON.stringify($scope.newStock)).then(function(res) {
-            return resetForm();
-          });
-        }
+      return $http.post('/api/stockList?stock=' + JSON.stringify($scope.newStock)).then(function() {
+        return resetForm();
       });
+    };
+    $scope.validate = function() {
+      if ($scope.newStock.stockName) {
+        $http.get('/api/stockList/stockExists?stock=' + JSON.stringify($scope.newStock)).then(function(res) {
+          if (res.data.stockExists) {
+            return $scope.error = res.data.error;
+          }
+        });
+      }
+      return resetError();
     };
     return resetForm();
   });

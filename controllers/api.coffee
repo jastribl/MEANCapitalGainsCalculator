@@ -17,11 +17,15 @@ api.delete '/api/stockList', (req, res) ->
 api.get '/api/stockList/stockExists', (req, res) ->
     stock = JSON.parse(req.query.stock)
     StockList.doesStockWithNameExist(stock.stockName.toUpperCase()).then (stockExists) ->
-        res.json stockExists
+        response = {
+            stockExists: stockExists
+            error: 'You already have this stock!' if stockExists
+        }
+        res.json response
 
-api.post '/api/stockList/add', (req, res) ->
+api.post '/api/stockList', (req, res) ->
     stock = JSON.parse(req.query.stock)
-    stock.stockName = stock.stockName.replace(' ', '_').toUpperCase()
+    stock.stockName = stock.stockName.toUpperCase()
     stock.number = 0 if not stock.number
     stock.acb = 0 if not stock.number
     StockList.addStock(stock).then ->

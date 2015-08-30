@@ -8,31 +8,31 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
             $scope.stockList = stockList.data
 
     resetNewStock = ->
-        $scope.newStock = {
-            stockName: null
-            number: null
-            acb: null
-        }
+        $scope.newStock = {}
 
-    $scope.reserError = ->
+    resetError = ->
         $scope.error = null
 
     resetForm = ->
         updateStockList()
         resetNewStock()
-        $scope.reserError()
+        resetError()
 
     $scope.remove = (stockName) ->
         $http.delete('/api/stockList?stockName=' + stockName).then ->
             updateStockList()
+            $scope.validate()
 
     $scope.add = ->
-        $http.get('/api/stockList/stockExists?stock=' + JSON.stringify($scope.newStock)).then (stockExists) ->
-            if stockExists.data
-                $scope.error = 'You already have this stock!'
-            else
-                $http.post('/api/stockList/add?stock=' + JSON.stringify($scope.newStock)).then (res) ->
-                    resetForm()
+        $http.post('/api/stockList?stock=' + JSON.stringify($scope.newStock)).then ->
+            resetForm()
+
+    $scope.validate = ->
+        if $scope.newStock.stockName
+            $http.get('/api/stockList/stockExists?stock=' + JSON.stringify($scope.newStock)).then (res) ->
+                if res.data.stockExists
+                    $scope.error = res.data.error
+        resetError()
 
 
     resetForm()
