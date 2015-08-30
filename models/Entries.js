@@ -110,15 +110,6 @@
           throw err;
         }
       });
-    },
-    removeAllEntriesForStockWithName: function(stockName) {
-      return entriesTable.remove({
-        stockName: stockName
-      }, function(err) {
-        if (err) {
-          throw err;
-        }
-      });
     }
   };
 

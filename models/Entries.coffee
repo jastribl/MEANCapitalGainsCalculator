@@ -47,10 +47,6 @@ Entries = {
         entriesTable.update {stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber}, entry, (err) ->
             throw err if err
 
-    removeAllEntriesForStockWithName: (stockName) ->
-        entriesTable.remove {stockName: stockName}, (err) ->
-            throw err if err
-
 }
 
 

@@ -1,31 +1,31 @@
 extends layout
 
 block content
-    table
-        each header in ['#','Name','Number','ACB','Function']
-            th= header
-        each stock, i in stocklist
-            form(method='post', action='/deletestock')
-                tr
-                    input(name='stockName' value=stock.stockName hidden)
-                    td.center= i + '.'
+    script(type='text/javascript', src='/javascript/stocklist.js')
+    div(ng-app='stockListApp')
+        div(ng-controller='StockListController')
+            table
+                each header in ['#','Name','Number','ACB','Function']
+                    th= header
+                tr(ng-repeat='stock in stockList')
+                    td.center {{$index + 1}}
                     td
-                        a(href='/stock?stockName=#{stock.stockName}')= stock.stockName
-                    td= stock.number
-                    td= stock.acb
+                        a(ng-href='/stock?stockName={{stock.stockName}}') {{stock.stockName}}
+                    td {{stock.number}}
+                    td {{stock.acb}}
                     td.center
-                        button.remove.center(type='submit') ✘
-        tr
-            form(method='post', action='/addstock')
-                td.input.center= stocklist.length + '.'
-                td.input
-                    input(type='text', placeholder='Name', name='stockName', value=liveEditStock ? liveEditStock.stockName : null, autofocus, required)
-                td.input
-                    input(type='number', step=1, min=0, placeholder='Number Of Existing Stocks', value=liveEditStock ? liveEditStock.number : null, name='number')
-                td.input
-                    input(type='number', step='any', min=0, placeholder='Adjusted Cost Base (Total)', value=liveEditStock ? liveEditStock.acb : null, name='acb')
-                td.input.center
-                    button.add.center(type='submit') +
+                        button.remove.center(ng-click='remove(stock.stockName)') ✘
+                tr
+                    form(method='post', action='/addstock')
+                        td.input.center {{stockList.length + 1}}
+                        td.input
+                            input(type='text', placeholder='Name', name='stockName', value=liveEditStock ? liveEditStock.stockName : null, autofocus, required)
+                        td.input
+                            input(type='number', step=1, min=0, placeholder='Number Of Existing Stocks', value=liveEditStock ? liveEditStock.number : null, name='number')
+                        td.input
+                            input(type='number', step='any', min=0, placeholder='Adjusted Cost Base (Total)', value=liveEditStock ? liveEditStock.acb : null, name='acb')
+                        td.input.center
+                            button.add.center(type='submit') +
     p
         a(href='./') Home
     script.

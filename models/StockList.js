@@ -39,9 +39,9 @@
     addStock: function(stock) {
       return stockListTable.insert(stock);
     },
-    removeStock: function(stock) {
+    deleteStockWithName: function(stockName) {
       return stockListTable.remove({
-        stockName: stock.stockName
+        stockName: stockName
       });
     }
   };

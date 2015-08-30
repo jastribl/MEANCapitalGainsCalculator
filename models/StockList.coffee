@@ -23,8 +23,8 @@ StockList = {
     addStock: (stock) ->
         stockListTable.insert(stock)
 
-    removeStock: (stock) ->
-        stockListTable.remove({ stockName: stock.stockName })
+    deleteStockWithName: (stockName) ->
+        stockListTable.remove({ stockName: stockName })
 
 }
 

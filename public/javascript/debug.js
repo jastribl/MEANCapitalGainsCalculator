@@ -5,12 +5,9 @@
   debugApp = angular.module('debugApp', []);
 
   debugApp.controller('StockListController', function($scope, $http) {
-    $scope.updateStockList = function() {
-      return $http.get('/api/stockList').then(function(stockList) {
-        return $scope.stockList = stockList.data;
-      });
-    };
-    return $scope.updateStockList();
+    return $http.get('/api/stockList').then(function(stockList) {
+      return $scope.stockList = stockList.data;
+    });
   });
 
   debugApp.controller('EntriesListController', function($scope, $http) {

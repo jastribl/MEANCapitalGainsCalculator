@@ -16,6 +16,16 @@
     });
   });
 
+  api["delete"]('/api/stockList', function(req, res) {
+    var stockName;
+    stockName = req.query.stockName;
+    return StockList.deleteStockWithName(stockName).then(function() {
+      return Entries.deleteAllEntriesForStockWithName(stockName).then(function() {
+        return res.sendStatus(200);
+      });
+    });
+  });
+
   api.get('/api/entriesList', function(req, res) {
     return Entries.getAllEntriesOrdered().then(function(entriesList) {
       return res.json(entriesList);

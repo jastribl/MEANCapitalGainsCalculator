@@ -2,10 +2,8 @@ debugApp = angular.module('debugApp', [])
 
 
 debugApp.controller 'StockListController', ($scope, $http) ->
-    $scope.updateStockList = ->
-        $http.get('/api/stockList').then (stockList) ->
-            $scope.stockList = stockList.data
-    $scope.updateStockList()
+    $http.get('/api/stockList').then (stockList) ->
+        $scope.stockList = stockList.data
 
 
 debugApp.controller 'EntriesListController', ($scope, $http) ->

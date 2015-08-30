@@ -11,16 +11,13 @@
   Entries = require('../models/Entries');
 
   controller.get('/stocklist', function(req, res) {
-    return StockList.getStockListOrdered().then(function(stocklist) {
-      var options;
-      options = {
-        title: 'Stock List',
-        stocklist: stocklist,
-        liveEditStock: req.session.liveEditStock ? req.session.liveEditStock : void 0
-      };
-      req.session.liveEditStock = null;
-      return res.render('stocklist', options);
-    });
+    var options;
+    options = {
+      title: 'Stock List',
+      liveEditStock: req.session.liveEditStock ? req.session.liveEditStock : void 0
+    };
+    req.session.liveEditStock = null;
+    return res.render('stocklist', options);
   });
 
   controller.post('/addstock', function(req, res) {
@@ -41,15 +38,6 @@
         StockList.addStock(stock);
         return res.redirect('/stocklist');
       }
-    });
-  });
-
-  controller.post('/deletestock', function(req, res) {
-    var stock;
-    stock = req.body;
-    return Entries.removeAllEntriesForStockWithName(stock.stockName).then(function() {
-      StockList.removeStock(stock).then(function() {});
-      return res.redirect('/stocklist');
     });
   });
 
