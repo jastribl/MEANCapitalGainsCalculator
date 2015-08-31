@@ -70,7 +70,7 @@ module.exports = controller
 
 
 insertAndReCalculate = (newEntry) ->
-    Entries.insertEntry(newEntry)
+    Entries.addEntry(newEntry)
     stockName = newEntry.stockName
     Entries.getEntriesForStockOrdered(stockName).then (entries) ->
         StockList.getStockByName(stockName).then (initialValues) ->

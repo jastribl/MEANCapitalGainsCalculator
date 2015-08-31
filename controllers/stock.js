@@ -99,7 +99,7 @@
 
   insertAndReCalculate = function(newEntry) {
     var stockName;
-    Entries.insertEntry(newEntry);
+    Entries.addEntry(newEntry);
     stockName = newEntry.stockName;
     return Entries.getEntriesForStockOrdered(stockName).then(function(entries) {
       return StockList.getStockByName(stockName).then(function(initialValues) {

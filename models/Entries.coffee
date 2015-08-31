@@ -38,7 +38,7 @@ Entries = {
         entry = cleanEntry(entry)
         entriesTable.count(stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber)
 
-    insertEntry: (entry) ->
+    addEntry: (entry) ->
         entry = cleanEntry(entry)
         entriesTable.insert(entry)
 

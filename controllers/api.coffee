@@ -33,8 +33,28 @@ api.post '/api/stockList', (req, res) ->
 
 
 api.get '/api/entriesList', (req, res) ->
-    Entries.getAllEntriesOrdered().then (entriesList) ->
-        res.json entriesList
+    stockName = req.query.stockName
+    if stockName
+        Entries.getEntriesForStockOrdered(stockName).then (entriesList) ->
+            res.json entriesList
+    else
+        Entries.getAllEntriesOrdered().then (entriesList) ->
+            res.json entriesList
+
+api.get '/api/entriesList/countMatching', (req, res) ->
+    entry = JSON.parse(req.query.entry)
+    Entries.getEntryCountMatchingData(entry).then (count) ->
+        res.json count
+
+api.post '/api/entriesList', (req, res) ->
+    entry = JSON.parse(req.query.entry)
+    Entries.addEntry(entry).then ->
+        res.sendStatus(200)
+
+api.delete '/api/entriesList', (req, res) ->
+    _id = req.query._id
+    Entries.removeEntryById(_id).then ->
+        res.sendStatus(200)
 
 
 module.exports = api

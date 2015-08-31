@@ -55,8 +55,40 @@
   });
 
   api.get('/api/entriesList', function(req, res) {
-    return Entries.getAllEntriesOrdered().then(function(entriesList) {
-      return res.json(entriesList);
+    var stockName;
+    stockName = req.query.stockName;
+    if (stockName) {
+      return Entries.getEntriesForStockOrdered(stockName).then(function(entriesList) {
+        return res.json(entriesList);
+      });
+    } else {
+      return Entries.getAllEntriesOrdered().then(function(entriesList) {
+        return res.json(entriesList);
+      });
+    }
+  });
+
+  api.get('/api/entriesList/countMatching', function(req, res) {
+    var entry;
+    entry = JSON.parse(req.query.entry);
+    return Entries.getEntryCountMatchingData(entry).then(function(count) {
+      return res.json(count);
+    });
+  });
+
+  api.post('/api/entriesList', function(req, res) {
+    var entry;
+    entry = JSON.parse(req.query.entry);
+    return Entries.addEntry(entry).then(function() {
+      return res.sendStatus(200);
+    });
+  });
+
+  api["delete"]('/api/entriesList', function(req, res) {
+    var _id;
+    _id = req.query._id;
+    return Entries.removeEntryById(_id).then(function() {
+      return res.sendStatus(200);
     });
   });
 

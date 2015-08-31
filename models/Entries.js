@@ -93,7 +93,7 @@
         tradeNumber: entry.tradeNumber
       });
     },
-    insertEntry: function(entry) {
+    addEntry: function(entry) {
       entry = cleanEntry(entry);
       return entriesTable.insert(entry);
     },
