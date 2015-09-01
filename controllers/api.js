@@ -26,19 +26,6 @@
     });
   });
 
-  api.get('/api/stockList/stockExists', function(req, res) {
-    var stock;
-    stock = JSON.parse(req.query.stock);
-    return StockList.doesStockWithNameExist(stock.stockName.toUpperCase()).then(function(stockExists) {
-      var response;
-      response = {
-        stockExists: stockExists,
-        error: stockExists ? 'You already have this stock!' : void 0
-      };
-      return res.json(response);
-    });
-  });
-
   api.post('/api/stockList', function(req, res) {
     var stock;
     stock = JSON.parse(req.query.stock);
@@ -66,14 +53,6 @@
         return res.json(entriesList);
       });
     }
-  });
-
-  api.get('/api/entriesList/countMatching', function(req, res) {
-    var entry;
-    entry = JSON.parse(req.query.entry);
-    return Entries.getEntryCountMatchingData(entry).then(function(count) {
-      return res.json(count);
-    });
   });
 
   api.post('/api/entriesList', function(req, res) {

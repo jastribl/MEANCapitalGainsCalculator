@@ -28,11 +28,16 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
             resetForm()
 
     $scope.validate = ->
-        if $scope.newStock.stockName
-            $http.get('/api/stockList/stockExists?stock=' + JSON.stringify($scope.newStock)).then (res) ->
-                if res.data.stockExists
-                    $scope.error = res.data.error
-        resetError()
+        stockList = $scope.stockList
+        newStock = $scope.newStock
+        entryIsValid = true
+        (
+            if stock.stockName == newStock.stockName.toUpperCase()
+                $scope.error = 'You already have this stock!'
+                entryIsValid = false
+                break
+        ) for stock in stockList
+        resetError() if entryIsValid
 
 
     resetForm()

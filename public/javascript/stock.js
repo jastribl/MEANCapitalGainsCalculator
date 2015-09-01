@@ -39,18 +39,34 @@
       return $scope.error = null;
     };
     resetForm = function() {
-      updateEntriesList();
-      resetNewEntry();
-      resetError();
-      return $scope.adjustTradeNumber();
+      return updateEntriesList().then(function() {
+        resetNewEntry();
+        resetError();
+        $scope.adjustTradeNumber();
+        return document.getElementById('newEntryAutofocusElement').focus();
+      });
     };
     $scope.adjustTradeNumber = function() {
-      return $http.get('/api/entriesList/countMatching?entry=' + JSON.stringify($scope.newEntry)).then(function(res) {
-        if (res.data !== 0) {
-          $scope.newEntry.tradeNumber++;
-          return $scope.adjustTradeNumber();
+      var conflictEntries, k, len, ref1, testEntry;
+      conflictEntries = [];
+      ref1 = $scope.entriesList;
+      for (k = 0, len = ref1.length; k < len; k++) {
+        testEntry = ref1[k];
+        if (testEntry.year === $scope.newEntry.year && testEntry.month === $scope.newEntry.month && testEntry.day === $scope.newEntry.day) {
+          conflictEntries.push(testEntry.tradeNumber);
+        } else if (testEntry.year > $scope.newEntry.year && testEntry.month > $scope.newEntry.month && testEntry.day > $scope.newEntry.day) {
+          if (conflictEntries.length === 0 || conflictEntries.indexOf($scope.newEntry.tradeNumber) === -1) {
+            return;
+          }
+          break;
         }
-      });
+      }
+      while (true) {
+        if (conflictEntries.indexOf($scope.newEntry.tradeNumber) === -1) {
+          break;
+        }
+        $scope.newEntry.tradeNumber++;
+      }
     };
     $scope.add = function() {
       return $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then(function() {

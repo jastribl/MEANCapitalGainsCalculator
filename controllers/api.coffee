@@ -14,15 +14,6 @@ api.delete '/api/stockList', (req, res) ->
         Entries.deleteAllEntriesForStockWithName(stockName).then ->
             res.sendStatus(200)
 
-api.get '/api/stockList/stockExists', (req, res) ->
-    stock = JSON.parse(req.query.stock)
-    StockList.doesStockWithNameExist(stock.stockName.toUpperCase()).then (stockExists) ->
-        response = {
-            stockExists: stockExists
-            error: 'You already have this stock!' if stockExists
-        }
-        res.json response
-
 api.post '/api/stockList', (req, res) ->
     stock = JSON.parse(req.query.stock)
     stock.stockName = stock.stockName.toUpperCase()
@@ -40,11 +31,6 @@ api.get '/api/entriesList', (req, res) ->
     else
         Entries.getAllEntriesOrdered().then (entriesList) ->
             res.json entriesList
-
-api.get '/api/entriesList/countMatching', (req, res) ->
-    entry = JSON.parse(req.query.entry)
-    Entries.getEntryCountMatchingData(entry).then (count) ->
-        res.json count
 
 api.post '/api/entriesList', (req, res) ->
     entry = JSON.parse(req.query.entry)

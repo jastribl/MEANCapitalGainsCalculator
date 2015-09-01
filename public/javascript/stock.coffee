@@ -30,16 +30,25 @@ stockApp.controller 'StockController', ($scope, $http) ->
         $scope.error = null
 
     resetForm = ->
-        updateEntriesList()
-        resetNewEntry()
-        resetError()
-        $scope.adjustTradeNumber()
+        updateEntriesList().then ->
+            resetNewEntry()
+            resetError()
+            $scope.adjustTradeNumber()
+            document.getElementById('newEntryAutofocusElement').focus()
 
     $scope.adjustTradeNumber = ->
-        $http.get('/api/entriesList/countMatching?entry=' + JSON.stringify($scope.newEntry)).then (res) ->
-            if res.data != 0
-                $scope.newEntry.tradeNumber++
-                $scope.adjustTradeNumber()
+        conflictEntries = []
+        (
+            if testEntry.year == $scope.newEntry.year and testEntry.month == $scope.newEntry.month and testEntry.day == $scope.newEntry.day
+                conflictEntries.push(testEntry.tradeNumber)
+            else if testEntry.year > $scope.newEntry.year and testEntry.month > $scope.newEntry.month and testEntry.day > $scope.newEntry.day
+                return if conflictEntries.length == 0 or conflictEntries.indexOf($scope.newEntry.tradeNumber) == -1
+                break
+        ) for testEntry in $scope.entriesList
+        while true
+            break if conflictEntries.indexOf($scope.newEntry.tradeNumber) == -1
+            $scope.newEntry.tradeNumber++
+        return
 
     $scope.add = ->
         $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then ->

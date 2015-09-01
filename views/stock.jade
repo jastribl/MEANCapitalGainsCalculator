@@ -81,11 +81,11 @@ block content
                             td.input
                                 select.input(ng-model='newEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber()' required)
                             td.input
-                                input(ng-model='newEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber()' required)
+                                input.input(ng-model='newEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber()' required)
                             td.input
                                 select.input(ng-model='newEntry.buysell' ng-options="i for i in ['buy', 'sell']" required)
                             td.input
-                                input(ng-model='newEntry.quanity' type='number' step=1 min=1 autofocus required)
+                                input(ng-model='newEntry.quanity' type='number' step=1 min=1 autofocus id='newEntryAutofocusElement' required)
                             td.input
                                 input(ng-model='newEntry.price' type='number' step=0.001 min=0 required)
                             td.input

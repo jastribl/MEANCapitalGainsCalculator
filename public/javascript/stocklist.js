@@ -34,14 +34,21 @@
       });
     };
     $scope.validate = function() {
-      if ($scope.newStock.stockName) {
-        $http.get('/api/stockList/stockExists?stock=' + JSON.stringify($scope.newStock)).then(function(res) {
-          if (res.data.stockExists) {
-            return $scope.error = res.data.error;
-          }
-        });
+      var entryIsValid, i, len, newStock, stock, stockList;
+      stockList = $scope.stockList;
+      newStock = $scope.newStock;
+      entryIsValid = true;
+      for (i = 0, len = stockList.length; i < len; i++) {
+        stock = stockList[i];
+        if (stock.stockName === newStock.stockName.toUpperCase()) {
+          $scope.error = 'You already have this stock!';
+          entryIsValid = false;
+          break;
+        }
       }
-      return resetError();
+      if (entryIsValid) {
+        return resetError();
+      }
     };
     return resetForm();
   });
