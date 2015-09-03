@@ -7,12 +7,12 @@ stockListTable = db.get('stocklist')
 StockList = {
 
     getStockListOrdered: ->
-        stockListTable.find {}, { sort: stockName: 1 }, (err, stockList) ->
+        stockListTable.find {}, {sort: stockName: 1}, (err, stockList) ->
             throw err if err
             stockList
 
     getStockByName: (stockName) ->
-        stockListTable.findOne { stockName: stockName }, (err, initialValues) ->
+        stockListTable.findOne {stockName: stockName}, (err, initialValues) ->
             throw err if err
             initialValues
 
@@ -24,7 +24,7 @@ StockList = {
         stockListTable.insert(stock)
 
     deleteStockWithName: (stockName) ->
-        stockListTable.remove({ stockName: stockName })
+        stockListTable.remove({stockName: stockName})
 
 }
 

@@ -5,8 +5,7 @@
   stockApp = angular.module('stockApp', []);
 
   stockApp.controller('StockController', function($scope, $http) {
-    var i, j, ref, resetError, resetForm, resetNewEntry, results, results1, updateEntriesList;
-    $scope.editId = null;
+    var adjustTradeNumbers, i, j, ref, resetError, resetForm, resetNewEntry, results, results1, updateEntriesList;
     $scope.years = (function() {
       results = [];
       for (var i = 2000, ref = new Date().getFullYear() + 1; 2000 <= ref ? i <= ref : i >= ref; 2000 <= ref ? i++ : i--){ results.push(i); }
@@ -36,36 +35,47 @@
       };
     };
     resetError = function() {
-      return $scope.error = null;
+      return delete $scope.error;
     };
     resetForm = function() {
+      resetError();
+      delete $scope.editId;
       return updateEntriesList().then(function() {
         resetNewEntry();
-        resetError();
-        $scope.adjustTradeNumber();
+        adjustTradeNumbers();
         return document.getElementById('newEntryAutofocusElement').focus();
       });
     };
-    $scope.adjustTradeNumber = function() {
-      var conflictEntries, k, len, ref1, testEntry;
-      conflictEntries = [];
-      ref1 = $scope.entriesList;
-      for (k = 0, len = ref1.length; k < len; k++) {
-        testEntry = ref1[k];
-        if (testEntry.year === $scope.newEntry.year && testEntry.month === $scope.newEntry.month && testEntry.day === $scope.newEntry.day) {
-          conflictEntries.push(testEntry.tradeNumber);
-        } else if (testEntry.year > $scope.newEntry.year && testEntry.month > $scope.newEntry.month && testEntry.day > $scope.newEntry.day) {
-          if (conflictEntries.length === 0 || conflictEntries.indexOf($scope.newEntry.tradeNumber) === -1) {
-            return;
+    adjustTradeNumbers = function() {
+      $scope.adjustTradeNumber($scope.newEntry);
+      return $scope.adjustTradeNumber($scope.editEntry);
+    };
+    $scope.adjustTradeNumber = function(adjustEntry) {
+      var conflictEntries, entry, k, len, ref1, results2;
+      if (adjustEntry) {
+        conflictEntries = [];
+        ref1 = $scope.entriesList;
+        for (k = 0, len = ref1.length; k < len; k++) {
+          entry = ref1[k];
+          if (entry._id !== adjustEntry._id) {
+            if (entry.year === adjustEntry.year && entry.month === adjustEntry.month && entry.day === adjustEntry.day) {
+              conflictEntries.push(entry.tradeNumber);
+            } else if (entry.year > adjustEntry.year && entry.month > adjustEntry.month && entry.day > adjustEntry.day) {
+              if (conflictEntries.length === 0 || conflictEntries.indexOf(adjustEntry.tradeNumber) === -1) {
+                return;
+              }
+              break;
+            }
           }
-          break;
         }
-      }
-      while (true) {
-        if (conflictEntries.indexOf($scope.newEntry.tradeNumber) === -1) {
-          break;
+        results2 = [];
+        while (true) {
+          if (conflictEntries.indexOf(adjustEntry.tradeNumber) === -1) {
+            break;
+          }
+          results2.push(adjustEntry.tradeNumber++);
         }
-        $scope.newEntry.tradeNumber++;
+        return results2;
       }
     };
     $scope.add = function() {
@@ -76,15 +86,18 @@
     $scope.remove = function(_id) {
       return $http["delete"]('/api/entriesList?_id=' + _id).then(function() {
         return updateEntriesList().then(function() {
-          return $scope.adjustTradeNumber();
+          return adjustTradeNumbers();
         });
       });
     };
-    $scope.editMode = function(_id) {
-      return console.log(_id);
+    $scope.editMode = function(entry) {
+      return $scope.editEntry = angular.copy(entry);
     };
-    $scope.edit = function(_id) {
-      return console.log(_id);
+    $scope.confirmEdit = function() {
+      return delete $scope.editEntry;
+    };
+    $scope.cancelEdit = function() {
+      return delete $scope.editEntry;
     };
     return resetForm();
   });

@@ -4,7 +4,7 @@ bodyParser = require('body-parser')
 session = require('client-sessions')
 
 
-controller = require('./controllers/index')
+router = require('./controllers/router')
 
 app = express()
 
@@ -23,7 +23,7 @@ app.use(express.static('public'))
 app.use(express.static('node_modules/angular'))
 
 
-app.use(controller)
+app.use(router)
 
 
 # error handlers

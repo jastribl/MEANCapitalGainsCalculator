@@ -4,6 +4,8 @@ StockList = require('../models/StockList')
 Entries = require('../models/Entries')
 
 
+# todo: split this up into differnet parts of the api.  Also, look into removing some model functions
+
 api.get '/api/stockList', (req, res) ->
     StockList.getStockListOrdered().then (stockList) ->
         res.json stockList
@@ -44,3 +46,34 @@ api.delete '/api/entriesList', (req, res) ->
 
 
 module.exports = api
+
+# need re-implementing
+# insertAndReCalculate = (newEntry) ->
+#     Entries.addEntry(newEntry)
+#     stockName = newEntry.stockName
+#     Entries.getEntriesForStockOrdered(stockName).then (entries) ->
+#         StockList.getStockByName(stockName).then (initialValues) ->
+#             lastEntry = {
+#                 quanity: +initialValues.number
+#                 totalshares: +initialValues.number
+#                 acbperunit: +initialValues.number == 0 ? 0 : +initialValues.acb / +initialValues.number
+#                 acbtotal: +initialValues.acb
+#             }
+#             Entries.deleteAllEntriesForStockWithName(stockName).then ->
+#                 entries.forEach (entry) ->
+#                     if entry.buysell == 'buy'
+#                         entry.totalshares = +lastEntry.totalshares + +entry.quanity
+#                         entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quanity) + +entry.commission
+#                         entry.acbperunit = +entry.acbtotal / +entry.totalshares
+#                     else if entry.buysell == 'sell'
+#                         entry.totalshares = +lastEntry.totalshares - +entry.quanity
+#                         entry.problem = true if entry.totalshares < 0
+#                         if entry.totalshares == 0
+#                             entry.acbtotal = 0
+#                             entry.acbperunit = 0
+#                         else
+#                             entry.acbtotal = +lastEntry.getACBTotal - (+entry.quanity * +lastEntry.acbtotal / +lastEntry.totalshares)
+#                             entry.acbperunit = +entry.acbtotal / +entry.totalshares
+#                         entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity)
+#                     lastEntry = entry
+#                     Entries.updateEntry(entry)

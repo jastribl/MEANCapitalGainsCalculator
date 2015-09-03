@@ -3,7 +3,6 @@ stockApp = angular.module('stockApp', [])
 
 stockApp.controller 'StockController', ($scope, $http) ->
 
-    $scope.editId = null
 
     $scope.years = [2000..new Date().getFullYear() + 1]
     $scope.months = [1..12]
@@ -27,28 +26,35 @@ stockApp.controller 'StockController', ($scope, $http) ->
         }
 
     resetError = ->
-        $scope.error = null
+        delete $scope.error
 
     resetForm = ->
+        resetError()
+        delete $scope.editId
         updateEntriesList().then ->
             resetNewEntry()
-            resetError()
-            $scope.adjustTradeNumber()
+            adjustTradeNumbers()
             document.getElementById('newEntryAutofocusElement').focus()
 
-    $scope.adjustTradeNumber = ->
-        conflictEntries = []
-        (
-            if testEntry.year == $scope.newEntry.year and testEntry.month == $scope.newEntry.month and testEntry.day == $scope.newEntry.day
-                conflictEntries.push(testEntry.tradeNumber)
-            else if testEntry.year > $scope.newEntry.year and testEntry.month > $scope.newEntry.month and testEntry.day > $scope.newEntry.day
-                return if conflictEntries.length == 0 or conflictEntries.indexOf($scope.newEntry.tradeNumber) == -1
-                break
-        ) for testEntry in $scope.entriesList
-        while true
-            break if conflictEntries.indexOf($scope.newEntry.tradeNumber) == -1
-            $scope.newEntry.tradeNumber++
-        return
+    adjustTradeNumbers = ->
+        $scope.adjustTradeNumber($scope.newEntry)
+        $scope.adjustTradeNumber($scope.editEntry)
+
+
+    $scope.adjustTradeNumber = (adjustEntry) ->
+        if adjustEntry
+            conflictEntries = []
+            (
+                if entry._id != adjustEntry._id
+                    if entry.year == adjustEntry.year and entry.month == adjustEntry.month and entry.day == adjustEntry.day
+                        conflictEntries.push(entry.tradeNumber)
+                    else if entry.year > adjustEntry.year and entry.month > adjustEntry.month and entry.day > adjustEntry.day
+                        return if conflictEntries.length == 0 or conflictEntries.indexOf(adjustEntry.tradeNumber) == -1
+                        break
+            ) for entry in $scope.entriesList
+            while true
+                break if conflictEntries.indexOf(adjustEntry.tradeNumber) == -1
+                adjustEntry.tradeNumber++
 
     $scope.add = ->
         $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then ->
@@ -57,13 +63,16 @@ stockApp.controller 'StockController', ($scope, $http) ->
     $scope.remove = (_id) ->
         $http.delete('/api/entriesList?_id=' + _id).then ->
             updateEntriesList().then ->
-                $scope.adjustTradeNumber()
+                adjustTradeNumbers()
 
-    $scope.editMode = (_id) ->
-        console.log _id
+    $scope.editMode = (entry) ->
+        $scope.editEntry = angular.copy(entry)
 
-    $scope.edit = (_id) ->
-        console.log _id
+    $scope.confirmEdit = ->
+        delete $scope.editEntry
+
+    $scope.cancelEdit = ->
+        delete $scope.editEntry
 
 
     resetForm()

@@ -6,54 +6,10 @@ block content
         div(ng-app='stockApp' ng-init="stockName='#{title}'")
             div(ng-controller='StockController')
                 table
-                    each header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']
-                        th= header
-                    tr(ng-repeat='entry in entriesList')
-                        //- editing row
-                        //- div(ng-if='entry._id == editId')
-                        //-     td.input
-                        //-         select.input(name='year' value=editEntry.year required)
-                        //-             - var now=parseInt(new Date().getFullYear())
-                        //-             - var set=parseInt(editEntry.year)
-                        //-             - var year=now + 1
-                        //-             while year >= 2000
-                        //-                 option.input(value=year selected=year===set)= year--
-                        //-     td.input
-                        //-         select.input(name='month' required)
-                        //-             - var set=parseInt(editEntry.month)
-                        //-             - var month=1
-                        //-             while month <= 12
-                        //-                 option.input(value=month selected=month===set)= month++
-                        //-     td.input
-                        //-         select.input(name='day' required)
-                        //-             - var set=parseInt(editEntry.day)
-                        //-             - var day=1
-                        //-             while day <= 31
-                        //-                 option.input(value=day selected=day===set)= day++
-                        //-     td.input
-                        //-         input(type='number' step=1 min=1 name='tradeNumber' value=editEntry.tradeNumber autofocus required)
-                        //-     td.input
-                        //-         select.input(name='buysell' required)
-                        //-             option.input(value='buy' selected=editEntry.buysell === 'buy') buy
-                        //-             option.input(value='sell' selected=editEntry.buysell === 'sell') sell
-                        //-     td.input
-                        //-         input(type='number' step=1 min=1 name='quanity' value=editEntry.quanity required)
-                        //-     td.input
-                        //-         input(type='number' step='any' min=0 name='price' value=editEntry.price required)
-                        //-     td.input
-                        //-         input(type='number' step='any' min=0 name='commission' value=editEntry.commission required)
-                        //-     td.input
-                        //-     td.input
-                        //-     td.input
-                        //-     td.input
-                        //-     td.input
-                        //-         div
-                        //-             span.tableCells
-                        //-                 button.add(ng-click='confirmEdit(entry._id)') ✓
-                        //-             span.tableCells
-                        //-                 button.edit(ng-click='cancelEdit()') ✘
-                        //- normal entry
-                        div(ng-if='entry._id != editId')
+                    tbody
+                        th(ng-repeat="header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']" ng-bind='header')
+                    tbody(ng-repeat='entry in entriesList')
+                        tr(ng-hide='entry._id == editEntry._id')
                             td(ng-bind='entry.year')
                             td(ng-bind='entry.month')
                             td(ng-bind='entry.day')
@@ -67,21 +23,50 @@ block content
                             td(ng-bind='entry.acbtotal | currency')
                             td(ng-bind='entry.capitalgainloss | currency')
                             td
-                                div
+                                div(ng-hide='editEntry._id')
                                     span.tableCells
-                                        button.edit(ng-click='editMode(entry._id)') E
+                                        button.edit(ng-click='editMode(entry)') E
                                     span.tableCells
                                         button.remove(ng-click='remove(entry._id)') ✘
-                    tr
+
+                        tr(ng-show='entry._id == editEntry._id')
+                            td.input
+                                select.input(ng-model='editEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(editEntry)' required)
+                            td.input
+                                select.input(ng-model='editEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber(editEntry)' required)
+                            td.input
+                                select.input(ng-model='editEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber(editEntry)' required)
+                            td.input
+                                input.input(ng-model='editEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber(editEntry)' required)
+                            td.input
+                                select.input(ng-model='editEntry.buysell' ng-options="i for i in ['buy', 'sell']" required)
+                            td.input
+                                input(ng-model='editEntry.quanity' type='number' step=1 min=1 autofocus id='editEntryAutofocusElement' required)
+                            td.input
+                                input(ng-model='editEntry.price' type='number' step=0.001 min=0 required)
+                            td.input
+                                input(ng-model='editEntry.commission' type='number' step=0.001 min=0 required)
+                            td.input
+                            td.input
+                            td.input
+                            td.input
+                            td.input
+                                div
+                                    span.tableCells
+                                        button.add(ng-click='confirmEdit()') ✓
+                                    span.tableCells
+                                        button.edit(ng-click='cancelEdit()') ✘
+
+                    tr(ng-hide='editEntry._id')
                         form(ng-submit='add()')
                             td.input
-                                select.input(ng-model='newEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber()' required)
+                                select.input(ng-model='newEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(newEntry)' required)
                             td.input
-                                select.input(ng-model='newEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber()' required)
+                                select.input(ng-model='newEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber(newEntry)' required)
                             td.input
-                                select.input(ng-model='newEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber()' required)
+                                select.input(ng-model='newEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber(newEntry)' required)
                             td.input
-                                input.input(ng-model='newEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber()' required)
+                                input.input(ng-model='newEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber(newEntry)' required)
                             td.input
                                 select.input(ng-model='newEntry.buysell' ng-options="i for i in ['buy', 'sell']" required)
                             td.input
@@ -98,5 +83,3 @@ block content
                                 button.add(type='submit') ADD
                 p= 'Back To '
                     a(ng-href='/stocklist') Stock List
-        //- script.
-        //-     if ("#{liveEntry.year}") alert('You already have an entry matching this data.')
