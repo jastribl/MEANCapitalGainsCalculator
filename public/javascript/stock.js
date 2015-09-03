@@ -5,7 +5,7 @@
   stockApp = angular.module('stockApp', []);
 
   stockApp.controller('StockController', function($scope, $http) {
-    var adjustTradeNumbers, i, j, ref, resetError, resetForm, resetNewEntry, results, results1, updateEntriesList;
+    var adjustTradeNumbers, i, j, ref, resetForm, resetNewEntry, results, results1, updateEntriesList;
     $scope.years = (function() {
       results = [];
       for (var i = 2000, ref = new Date().getFullYear() + 1; 2000 <= ref ? i <= ref : i >= ref; 2000 <= ref ? i++ : i--){ results.push(i); }
@@ -34,12 +34,8 @@
         commission: 9.99
       };
     };
-    resetError = function() {
-      return delete $scope.error;
-    };
     resetForm = function() {
-      resetError();
-      delete $scope.editId;
+      $scope.editId = null;
       return updateEntriesList().then(function() {
         resetNewEntry();
         adjustTradeNumbers();
@@ -94,10 +90,10 @@
       return $scope.editEntry = angular.copy(entry);
     };
     $scope.confirmEdit = function() {
-      return delete $scope.editEntry;
+      return $scope.editEntry = null;
     };
     $scope.cancelEdit = function() {
-      return delete $scope.editEntry;
+      return $scope.editEntry = null;
     };
     return resetForm();
   });

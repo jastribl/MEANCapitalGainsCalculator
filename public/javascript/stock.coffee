@@ -25,12 +25,8 @@ stockApp.controller 'StockController', ($scope, $http) ->
             commission: 9.99
         }
 
-    resetError = ->
-        delete $scope.error
-
     resetForm = ->
-        resetError()
-        delete $scope.editId
+        $scope.editId = null
         updateEntriesList().then ->
             resetNewEntry()
             adjustTradeNumbers()
@@ -69,10 +65,10 @@ stockApp.controller 'StockController', ($scope, $http) ->
         $scope.editEntry = angular.copy(entry)
 
     $scope.confirmEdit = ->
-        delete $scope.editEntry
+        $scope.editEntry = null
 
     $scope.cancelEdit = ->
-        delete $scope.editEntry
+        $scope.editEntry = null
 
 
     resetForm()
