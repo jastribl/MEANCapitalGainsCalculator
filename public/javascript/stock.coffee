@@ -57,7 +57,7 @@ stockApp.controller 'StockController', ($scope, $http) ->
             resetForm()
 
     $scope.remove = (_id) ->
-        $http.delete('/api/entriesList?_id=' + _id).then ->
+        $http.delete('/api/entriesList/' + _id).then ->
             updateEntriesList().then ->
                 adjustTradeNumbers()
 

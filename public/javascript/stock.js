@@ -80,7 +80,7 @@
       });
     };
     $scope.remove = function(_id) {
-      return $http["delete"]('/api/entriesList?_id=' + _id).then(function() {
+      return $http["delete"]('/api/entriesList/' + _id).then(function() {
         return updateEntriesList().then(function() {
           return adjustTradeNumbers();
         });

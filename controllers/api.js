@@ -63,9 +63,9 @@
     });
   });
 
-  api["delete"]('/api/entriesList', function(req, res) {
+  api["delete"]('/api/entriesList/:_id', function(req, res) {
     var _id;
-    _id = req.query._id;
+    _id = req.params._id;
     return Entries.removeEntryById(_id).then(function() {
       return res.sendStatus(200);
     });

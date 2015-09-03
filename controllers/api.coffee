@@ -39,8 +39,8 @@ api.post '/api/entriesList', (req, res) ->
     Entries.addEntry(entry).then ->
         res.sendStatus(200)
 
-api.delete '/api/entriesList', (req, res) ->
-    _id = req.query._id
+api.delete '/api/entriesList/:_id', (req, res) ->
+    _id = req.params._id
     Entries.removeEntryById(_id).then ->
         res.sendStatus(200)
 
