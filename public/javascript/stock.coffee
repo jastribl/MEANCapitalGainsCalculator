@@ -10,7 +10,7 @@ stockApp.controller 'StockController', ($scope, $http) ->
 
 
     updateEntriesList = ->
-        $http.get('/api/entriesList?stockName=' + $scope.stockName).then (entriesList) ->
+        $http.get('/api/entriesList/' + $scope.stockName).then (entriesList) ->
             $scope.entriesList = entriesList.data
 
     resetNewEntry = ->

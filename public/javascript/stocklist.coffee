@@ -14,14 +14,14 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
         $scope.error = null
 
     resetForm = ->
-        updateStockList()
-        resetNewStock()
-        resetError()
+        updateStockList().then ->
+            resetNewStock()
+            resetError()
 
     $scope.remove = (stockName) ->
-        $http.delete('/api/stockList?stockName=' + stockName).then ->
-            updateStockList()
-            $scope.validate()
+        $http.delete('/api/stockList/' + stockName).then ->
+            updateStockList().then ->
+                $scope.validate()
 
     $scope.add = ->
         $http.post('/api/stockList?stock=' + JSON.stringify($scope.newStock)).then ->

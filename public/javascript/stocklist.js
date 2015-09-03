@@ -18,14 +18,16 @@
       return $scope.error = null;
     };
     resetForm = function() {
-      updateStockList();
-      resetNewStock();
-      return resetError();
+      return updateStockList().then(function() {
+        resetNewStock();
+        return resetError();
+      });
     };
     $scope.remove = function(stockName) {
-      return $http["delete"]('/api/stockList?stockName=' + stockName).then(function() {
-        updateStockList();
-        return $scope.validate();
+      return $http["delete"]('/api/stockList/' + stockName).then(function() {
+        return updateStockList().then(function() {
+          return $scope.validate();
+        });
       });
     };
     $scope.add = function() {

@@ -18,7 +18,7 @@
       return results1;
     }).apply(this);
     updateEntriesList = function() {
-      return $http.get('/api/entriesList?stockName=' + $scope.stockName).then(function(entriesList) {
+      return $http.get('/api/entriesList/' + $scope.stockName).then(function(entriesList) {
         return $scope.entriesList = entriesList.data;
       });
     };

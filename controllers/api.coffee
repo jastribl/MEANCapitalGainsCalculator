@@ -10,8 +10,8 @@ api.get '/api/stockList', (req, res) ->
     StockList.getStockListOrdered().then (stockList) ->
         res.json stockList
 
-api.delete '/api/stockList', (req, res) ->
-    stockName = req.query.stockName
+api.delete '/api/stockList/:stockName', (req, res) ->
+    stockName = req.params.stockName
     StockList.deleteStockWithName(stockName).then ->
         Entries.deleteAllEntriesForStockWithName(stockName).then ->
             res.sendStatus(200)
@@ -25,8 +25,8 @@ api.post '/api/stockList', (req, res) ->
         res.sendStatus(200)
 
 
-api.get '/api/entriesList', (req, res) ->
-    stockName = req.query.stockName
+api.get '/api/entriesList/:stockName', (req, res) ->
+    stockName = req.params.stockName
     if stockName
         Entries.getEntriesForStockOrdered(stockName).then (entriesList) ->
             res.json entriesList
