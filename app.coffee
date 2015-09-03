@@ -1,17 +1,11 @@
 express = require('express')
-logger = require('morgan')
-bodyParser = require('body-parser')
 
 
 router = require('./controllers/router')
 
 app = express()
 
-# view engine setup
 app.set('view engine', 'jade')
-app.use(logger('dev'))
-app.use(bodyParser.json())
-app.use(bodyParser.urlencoded(extended: false))
 app.use(express.static('public'))
 app.use(express.static('node_modules/angular'))
 
@@ -19,9 +13,6 @@ app.use(express.static('node_modules/angular'))
 app.use(router)
 
 
-# error handlers
-# development error handler
-# will print stacktrace
 if app.get('env') == 'development'
     app.use (err, req, res, next) ->
         res.status err.status or 500
@@ -30,8 +21,7 @@ if app.get('env') == 'development'
             error: err
         })
 
-# production error handler
-# no stacktraces leaked to user
+
 app.use (err, req, res, next) ->
     res.status err.status or 500
     res.render('error', {

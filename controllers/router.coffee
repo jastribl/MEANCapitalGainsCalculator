@@ -17,8 +17,8 @@ router.get '/stock', (req, res) ->
             res.render('stock', {title: stockName})
         else
             error = {
-                status: '404'
-                stack: 'You have attemped to gain access to stock \'' + stockName + '\'\n
+                status: 404
+                message: 'You have attemped to gain access to stock \'' + stockName + '\'\n
                         But you do not have that stock!'
             }
             res.render('error', {error})

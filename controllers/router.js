@@ -29,8 +29,8 @@
         });
       } else {
         error = {
-          status: '404',
-          stack: 'You have attemped to gain access to stock \'' + stockName + '\'\n But you do not have that stock!'
+          status: 404,
+          message: 'You have attemped to gain access to stock \'' + stockName + '\'\n But you do not have that stock!'
         };
         return res.render('error', {
           error: error
