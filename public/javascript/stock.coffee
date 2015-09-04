@@ -10,7 +10,7 @@ stockApp.controller 'StockController', ($scope, $http) ->
 
 
     updateEntriesList = ->
-        $http.get('/api/entriesList/' + $scope.stockName).then (entriesList) ->
+        $http.get('/api/entriesList?stockName=' + $scope.stockName).then (entriesList) ->
             $scope.entriesList = entriesList.data
 
     resetNewEntry = ->
@@ -26,7 +26,6 @@ stockApp.controller 'StockController', ($scope, $http) ->
         }
 
     resetForm = ->
-        $scope.editId = null
         updateEntriesList().then ->
             resetNewEntry()
             adjustTradeNumbers()
@@ -57,7 +56,7 @@ stockApp.controller 'StockController', ($scope, $http) ->
             resetForm()
 
     $scope.remove = (_id) ->
-        $http.delete('/api/entriesList/' + _id).then ->
+        $http.delete('/api/entriesList?_id=' + _id).then ->
             updateEntriesList().then ->
                 adjustTradeNumbers()
 
@@ -65,7 +64,9 @@ stockApp.controller 'StockController', ($scope, $http) ->
         $scope.editEntry = angular.copy(entry)
 
     $scope.confirmEdit = ->
-        $scope.editEntry = null
+        $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then ->
+            $scope.editEntry = null
+            resetForm()
 
     $scope.cancelEdit = ->
         $scope.editEntry = null

@@ -89,7 +89,6 @@
       return $scope.editEntry = angular.copy(entry);
     };
     $scope.confirmEdit = function() {
-      console.log('weflkjwnflwkje');
       return $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then(function() {
         $scope.editEntry = null;
         return resetForm();

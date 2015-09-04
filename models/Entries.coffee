@@ -14,29 +14,14 @@ Entries = {
             throw err if err
             entries
 
-    getEntryWithMatchingTimeData: (entry) ->
-        entry = cleanEntry(entry)
-        entriesTable.findOne {stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber}, (err, entry) ->
-            throw err if err
-            entry
-
     getEntriesForStockOrdered: (stockName) ->
         entriesTable.find {stockName: stockName}, {sort: year: 1, month: 1, day: 1, tradeNumber: 1}, (err, entries) ->
             throw err if err
             entries
 
-    getEntryById: (_id) ->
-        entriesTable.findOne {_id: _id}, (err, entry) ->
-            throw err if err
-            entry
-
     removeEntryById: (_id) ->
         entriesTable.remove {_id: _id}, (err) ->
             throw err if err
-
-    getEntryCountMatchingData: (entry) ->
-        entry = cleanEntry(entry)
-        entriesTable.count(stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber)
 
     addEntry: (entry) ->
         entry = cleanEntry(entry)

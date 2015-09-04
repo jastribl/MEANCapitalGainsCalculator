@@ -32,21 +32,6 @@
         return entries;
       });
     },
-    getEntryWithMatchingTimeData: function(entry) {
-      entry = cleanEntry(entry);
-      return entriesTable.findOne({
-        stockName: entry.stockName,
-        year: entry.year,
-        month: entry.month,
-        day: entry.day,
-        tradeNumber: entry.tradeNumber
-      }, function(err, entry) {
-        if (err) {
-          throw err;
-        }
-        return entry;
-      });
-    },
     getEntriesForStockOrdered: function(stockName) {
       return entriesTable.find({
         stockName: stockName
@@ -64,16 +49,6 @@
         return entries;
       });
     },
-    getEntryById: function(_id) {
-      return entriesTable.findOne({
-        _id: _id
-      }, function(err, entry) {
-        if (err) {
-          throw err;
-        }
-        return entry;
-      });
-    },
     removeEntryById: function(_id) {
       return entriesTable.remove({
         _id: _id
@@ -81,16 +56,6 @@
         if (err) {
           throw err;
         }
-      });
-    },
-    getEntryCountMatchingData: function(entry) {
-      entry = cleanEntry(entry);
-      return entriesTable.count({
-        stockName: entry.stockName,
-        year: entry.year,
-        month: entry.month,
-        day: entry.day,
-        tradeNumber: entry.tradeNumber
       });
     },
     addEntry: function(entry) {
