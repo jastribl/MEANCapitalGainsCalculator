@@ -31,21 +31,21 @@ block content
 
                         tr(ng-show='entry._id == editEntry._id')
                             td.input
-                                select.input(ng-model='editEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(editEntry)' required)
+                                select.input(ng-model='editEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(editEntry)')
                             td.input
-                                select.input(ng-model='editEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber(editEntry)' required)
+                                select.input(ng-model='editEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber(editEntry)')
                             td.input
-                                select.input(ng-model='editEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber(editEntry)' required)
+                                select.input(ng-model='editEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber(editEntry)')
                             td.input
-                                input.input(ng-model='editEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber(editEntry)' required)
+                                input.input(ng-model='editEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber(editEntry)')
                             td.input
-                                select.input(ng-model='editEntry.buysell' ng-options="i for i in ['buy', 'sell']" required)
+                                select.input(ng-model='editEntry.buysell' ng-options="i for i in ['buy', 'sell']")
                             td.input
-                                input(ng-model='editEntry.quantity' type='number' step=1 min=1 autofocus id='editEntryAutofocusElement' required)
+                                input(ng-model='editEntry.quantity' type='number' step=1 min=1 autofocus id='editEntryAutofocusElement')
                             td.input
-                                input(ng-model='editEntry.price' type='number' step='any' min=0 required)
+                                input(ng-model='editEntry.price' type='number' step='any' min=0)
                             td.input
-                                input(ng-model='editEntry.commission' type='number' step='any' min=0 required)
+                                input(ng-model='editEntry.commission' type='number' step='any' min=0)
                             td.input
                             td.input
                             td.input
@@ -58,7 +58,7 @@ block content
                                         button.edit(ng-click='cancelEdit()') ✘
                     tbody
                         tr(ng-hide='editEntry._id')
-                            form(ng-submit='add()' id='newEntryForm' )
+                            form(ng-submit='add()')
                                 td.input
                                     select.input(ng-model='newEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(newEntry)')
                                 td.input

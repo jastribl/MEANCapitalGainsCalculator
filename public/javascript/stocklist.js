@@ -19,8 +19,7 @@
       });
     };
     refocusForm = function() {
-      document.getElementById('newStockForm').reset();
-      return document.getElementById('newStockAutofocus').focus();
+      return $('#newStockAutofocusElement').focus();
     };
     $scope.remove = function(stockName) {
       return $http["delete"]('/api/stockList?stockName=' + stockName).then(function() {
@@ -55,6 +54,12 @@
           return $scope.errors.push('You must either fill out both the number and the acb or leave both blank!');
         }
       }
+    };
+    $scope.validStock = function(stock) {
+      if (!stock) {
+        return false;
+      }
+      return !stock.stockName;
     };
     return resetForm();
   });

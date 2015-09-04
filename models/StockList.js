@@ -7,12 +7,8 @@
   stockListTable = db.get('stocklist');
 
   StockList = {
-    getStockListOrdered: function() {
-      return stockListTable.find({}, {
-        sort: {
-          stockName: 1
-        }
-      }, function(err, stockList) {
+    getStockList: function() {
+      return stockListTable.find({}, function(err, stockList) {
         if (err) {
           throw err;
         }

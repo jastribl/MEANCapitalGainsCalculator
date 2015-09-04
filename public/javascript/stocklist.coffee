@@ -13,10 +13,7 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
             $scope.newStock = {}
             $scope.errors = []
 
-    refocusForm = ->
-        document.getElementById('newStockForm').reset()
-        document.getElementById('newStockAutofocus').focus()
-
+    refocusForm = -> $('#newStockAutofocusElement').focus()
 
     $scope.remove = (stockName) ->
         $http.delete('/api/stockList?stockName=' + stockName).then ->
@@ -44,5 +41,9 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
                 ) for stock in stockList
             if (if newStock.number then !newStock.acb else newStock.acb)
                 $scope.errors.push('You must either fill out both the number and the acb or leave both blank!')
+
+    $scope.validStock = (stock) ->
+        return false if not stock
+        return (!stock.stockName)
 
     resetForm()

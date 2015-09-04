@@ -25,7 +25,6 @@ stockApp.controller 'StockController', ($scope, $http) ->
         $scope.adjustTradeNumber($scope.newEntry)
         $scope.adjustTradeNumber($scope.editEntry)
 
-
     $scope.adjustTradeNumber = (adjustEntry) ->
         if adjustEntry
             conflictEntries = []

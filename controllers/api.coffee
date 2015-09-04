@@ -5,7 +5,7 @@ Entries = require('../models/Entries')
 
 
 api.get '/api/stockList', (req, res) ->
-    StockList.getStockListOrdered().then (stockList) ->
+    StockList.getStockList().then (stockList) ->
         res.json stockList
 
 api.delete '/api/stockList', (req, res) ->

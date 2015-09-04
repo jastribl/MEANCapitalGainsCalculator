@@ -11,7 +11,7 @@
   Entries = require('../models/Entries');
 
   api.get('/api/stockList', function(req, res) {
-    return StockList.getStockListOrdered().then(function(stockList) {
+    return StockList.getStockList().then(function(stockList) {
       return res.json(stockList);
     });
   });

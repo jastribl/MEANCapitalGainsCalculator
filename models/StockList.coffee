@@ -6,8 +6,8 @@ stockListTable = db.get('stocklist')
 
 StockList = {
 
-    getStockListOrdered: ->
-        stockListTable.find {}, {sort: stockName: 1}, (err, stockList) ->
+    getStockList: ->
+        stockListTable.find {}, (err, stockList) ->
             throw err if err
             stockList
 

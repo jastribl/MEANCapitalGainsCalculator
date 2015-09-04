@@ -6,7 +6,7 @@ block content
         table
             each header in ['#','Name','Number','ACB','Function']
                 th= header
-            tr(ng-repeat='stock in stockList')
+            tr(ng-repeat="stock in stockList | orderBy: 'stockName'")
                 td.center(ng-bind='$index + 1')
                 td
                     a(ng-bind='stock.stockName' ng-href='/stock?stockName={{stock.stockName}}')
@@ -15,16 +15,16 @@ block content
                 td.center
                     button.remove.center(ng-click='remove(stock.stockName)') ✘
             tr
-                form(ng-submit='add()' id='newStockForm' )
+                form(ng-submit='add()')
                     td.input.center(ng-bind='stockList.length + 1')
                     td.input
-                        input(ng-model='newStock.stockName' ng-change='validate()' type='text' placeholder='Name' id='newStockAutofocus' autofocus required)
+                        input(ng-model='newStock.stockName' ng-change='validate()' type='text' placeholder='Name' id='newStockAutofocusElement' autofocus)
                     td.input
                         input(ng-model='newStock.number' ng-change='validate()' type='number' step=1 min=0 placeholder='Number Of Existing Stocks' )
                     td.input
                         input(ng-model='newStock.acb' ng-change='validate()' type='number' step='any' min=0 placeholder='Adjusted Cost Base (Total)')
                     td.input.center
-                        button.add.center(type='submit' ng-disabled='errors.length > 0') +
+                        button.add.center(type='submit' ng-disabled='errors.length > 0 || validStock(newStock)') +
         p.error.center(ng-repeat='error in errors' ng-bind='error')
     p
     a(href='/') Home
