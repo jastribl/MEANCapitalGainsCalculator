@@ -20,14 +20,14 @@ block content
         h2 Entries
         div(ng-controller='EntriesListController')
             table
-                each header in ['StockName', 'Date','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses']
+                each header in ['StockName', 'Date','Trade #','Buy / Sell','Quantity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses']
                     th= header
                 tr(ng-repeat='entry in entriesList')
                     td {{entry.stockName}}
                     td {{entry.year}}/{{entry.month}}/{{entry.day}}
                     td {{entry.tradeNumber}}
                     td {{entry.buysell}}
-                    td {{entry.quanity}}
+                    td {{entry.quantity}}
                     td {{entry.price | currency}}
                     td {{entry.commission | currency}}
                     td {{entry.totalshares}}

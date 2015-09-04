@@ -57,7 +57,7 @@ module.exports = api
 #     Entries.getEntriesForStockOrdered(stockName).then (entries) ->
 #         StockList.getStockByName(stockName).then (initialValues) ->
 #             lastEntry = {
-#                 quanity: +initialValues.number
+#                 quantity: +initialValues.number
 #                 totalshares: +initialValues.number
 #                 acbperunit: +initialValues.number == 0 ? 0 : +initialValues.acb / +initialValues.number
 #                 acbtotal: +initialValues.acb
@@ -65,18 +65,18 @@ module.exports = api
 #             Entries.deleteAllEntriesForStockWithName(stockName).then ->
 #                 entries.forEach (entry) ->
 #                     if entry.buysell == 'buy'
-#                         entry.totalshares = +lastEntry.totalshares + +entry.quanity
-#                         entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quanity) + +entry.commission
+#                         entry.totalshares = +lastEntry.totalshares + +entry.quantity
+#                         entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quantity) + +entry.commission
 #                         entry.acbperunit = +entry.acbtotal / +entry.totalshares
 #                     else if entry.buysell == 'sell'
-#                         entry.totalshares = +lastEntry.totalshares - +entry.quanity
+#                         entry.totalshares = +lastEntry.totalshares - +entry.quantity
 #                         entry.problem = true if entry.totalshares < 0
 #                         if entry.totalshares == 0
 #                             entry.acbtotal = 0
 #                             entry.acbperunit = 0
 #                         else
-#                             entry.acbtotal = +lastEntry.getACBTotal - (+entry.quanity * +lastEntry.acbtotal / +lastEntry.totalshares)
+#                             entry.acbtotal = +lastEntry.getACBTotal - (+entry.quantity * +lastEntry.acbtotal / +lastEntry.totalshares)
 #                             entry.acbperunit = +entry.acbtotal / +entry.totalshares
-#                         entry.capitalgainloss = ((+entry.price * +entry.quanity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quanity)
+#                         entry.capitalgainloss = ((+entry.price * +entry.quantity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quantity)
 #                     lastEntry = entry
 #                     Entries.updateEntry(entry)

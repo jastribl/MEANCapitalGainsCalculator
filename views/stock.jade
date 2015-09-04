@@ -7,7 +7,7 @@ block content
             div(ng-controller='StockController')
                 table
                     tbody
-                        th(ng-repeat="header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quanity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']" ng-bind='header')
+                        th(ng-repeat="header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quantity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']" ng-bind='header')
                     tbody(ng-repeat='entry in entriesList')
                         tr(ng-hide='entry._id == editEntry._id')
                             td(ng-bind='entry.year')
@@ -15,7 +15,7 @@ block content
                             td(ng-bind='entry.day')
                             td(ng-bind='entry.tradeNumber')
                             td(ng-bind='entry.buysell')
-                            td(ng-bind='entry.quanity')
+                            td(ng-bind='entry.quantity')
                             td(ng-bind='entry.price | currency')
                             td(ng-bind='entry.commission | currency')
                             td(ng-bind='entry.totalshares')
@@ -41,11 +41,11 @@ block content
                             td.input
                                 select.input(ng-model='editEntry.buysell' ng-options="i for i in ['buy', 'sell']" required)
                             td.input
-                                input(ng-model='editEntry.quanity' type='number' step=1 min=1 autofocus id='editEntryAutofocusElement' required)
+                                input(ng-model='editEntry.quantity' type='number' step=1 min=1 autofocus id='editEntryAutofocusElement' required)
                             td.input
-                                input(ng-model='editEntry.price' type='number' step=0.001 min=0 required)
+                                input(ng-model='editEntry.price' type='number' step='any' min=0 required)
                             td.input
-                                input(ng-model='editEntry.commission' type='number' step=0.001 min=0 required)
+                                input(ng-model='editEntry.commission' type='number' step='any' min=0 required)
                             td.input
                             td.input
                             td.input
@@ -53,33 +53,33 @@ block content
                             td.input
                                 div
                                     span.tableCells
-                                        button.add(ng-click='confirmEdit()') ✓
+                                        button.add(ng-click='confirmEdit()' ng-disabled='validEntry(editEntry)') ✓
                                     span.tableCells
                                         button.edit(ng-click='cancelEdit()') ✘
                     tbody
                         tr(ng-hide='editEntry._id')
-                            form(ng-submit='add()')
+                            form(ng-submit='add()' id='newEntryForm' )
                                 td.input
-                                    select.input(ng-model='newEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(newEntry)' required)
+                                    select.input(ng-model='newEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(newEntry)')
                                 td.input
-                                    select.input(ng-model='newEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber(newEntry)' required)
+                                    select.input(ng-model='newEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber(newEntry)')
                                 td.input
-                                    select.input(ng-model='newEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber(newEntry)' required)
+                                    select.input(ng-model='newEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber(newEntry)')
                                 td.input
-                                    input.input(ng-model='newEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber(newEntry)' required)
+                                    input.input(ng-model='newEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber(newEntry)')
                                 td.input
-                                    select.input(ng-model='newEntry.buysell' ng-options="i for i in ['buy', 'sell']" required)
+                                    select.input(ng-model='newEntry.buysell' ng-options="i for i in ['buy', 'sell']")
                                 td.input
-                                    input(ng-model='newEntry.quanity' type='number' step=1 min=1 autofocus id='newEntryAutofocusElement' required)
+                                    input(ng-model='newEntry.quantity' type='number' step=1 min=1 autofocus id='newEntryAutofocusElement')
                                 td.input
-                                    input(ng-model='newEntry.price' type='number' step=0.001 min=0 required)
+                                    input(ng-model='newEntry.price' type='number' step='any' min=0)
                                 td.input
-                                    input(ng-model='newEntry.commission' type='number' step=0.001 min=0 required)
-                                td.input
-                                td.input
+                                    input(ng-model='newEntry.commission' type='number' step='any' min=0)
                                 td.input
                                 td.input
                                 td.input
-                                    button.add(type='submit') ADD
+                                td.input
+                                td.input
+                                    button.add(type='submit' ng-disabled='validEntry(newEntry)') ADD
                 p= 'Back To '
                     a(ng-href='/stocklist') Stock List

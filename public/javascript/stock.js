@@ -5,7 +5,7 @@
   stockApp = angular.module('stockApp', []);
 
   stockApp.controller('StockController', function($scope, $http) {
-    var adjustTradeNumbers, i, j, ref, resetForm, resetNewEntry, results, results1, updateEntriesList;
+    var adjustTradeNumbers, i, j, ref, refocusForm, resetForm, results, results1, updateEntriesList;
     $scope.years = (function() {
       results = [];
       for (var i = 2000, ref = new Date().getFullYear() + 1; 2000 <= ref ? i <= ref : i >= ref; 2000 <= ref ? i++ : i--){ results.push(i); }
@@ -22,24 +22,15 @@
         return $scope.entriesList = entriesList.data;
       });
     };
-    resetNewEntry = function() {
-      return $scope.newEntry = {
-        stockName: $scope.stockName,
-        year: new Date().getFullYear(),
-        month: new Date().getMonth() + 1,
-        day: new Date().getDate(),
-        tradeNumber: 1,
-        buysell: 'buy',
-        price: null,
-        commission: 9.99
-      };
-    };
     resetForm = function() {
+      delete $scope.newEntry.price;
+      delete $scope.newEntry.quantity;
       return updateEntriesList().then(function() {
-        resetNewEntry();
-        adjustTradeNumbers();
-        return document.getElementById('newEntryAutofocusElement').focus();
+        return adjustTradeNumbers();
       });
+    };
+    refocusForm = function() {
+      return $('#newEntryAutofocusElement').focus();
     };
     adjustTradeNumbers = function() {
       $scope.adjustTradeNumber($scope.newEntry);
@@ -73,15 +64,23 @@
         return results2;
       }
     };
+    $scope.validEntry = function(entry) {
+      if (!entry) {
+        return false;
+      }
+      return !entry.tradeNumber || !entry.quantity || !entry.price || !entry.commission;
+    };
     $scope.add = function() {
       return $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then(function() {
-        return resetForm();
+        resetForm();
+        return refocusForm();
       });
     };
     $scope.remove = function(_id) {
       return $http["delete"]('/api/entriesList?_id=' + _id).then(function() {
         return updateEntriesList().then(function() {
-          return adjustTradeNumbers();
+          adjustTradeNumbers();
+          return refocusForm();
         });
       });
     };
@@ -90,14 +89,27 @@
     };
     $scope.confirmEdit = function() {
       return $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then(function() {
-        $scope.editEntry = null;
-        return resetForm();
+        delete $scope.editEntry;
+        return refocusForm();
       });
     };
     $scope.cancelEdit = function() {
-      return $scope.editEntry = null;
+      refocusForm();
+      return delete $scope.editEntry;
     };
-    return resetForm();
+    return updateEntriesList().then(function() {
+      $scope.newEntry = {
+        stockName: $scope.stockName,
+        year: new Date().getFullYear(),
+        month: new Date().getMonth() + 1,
+        day: new Date().getDate(),
+        tradeNumber: 1,
+        buysell: 'buy',
+        commission: 9.99
+      };
+      adjustTradeNumbers();
+      return refocusForm();
+    });
   });
 
 }).call(this);

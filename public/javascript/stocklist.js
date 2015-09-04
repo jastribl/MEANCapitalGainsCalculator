@@ -5,52 +5,54 @@
   stockListApp = angular.module('stockListApp', []);
 
   stockListApp.controller('StockListController', function($scope, $http) {
-    var resetError, resetForm, resetNewStock, updateStockList;
+    var refocusForm, resetForm, updateStockList;
     updateStockList = function() {
       return $http.get('/api/stockList').then(function(stockList) {
         return $scope.stockList = stockList.data;
       });
     };
-    resetNewStock = function() {
-      return $scope.newStock = {};
-    };
-    resetError = function() {
-      return $scope.error = null;
-    };
     resetForm = function() {
       return updateStockList().then(function() {
-        resetNewStock();
-        return resetError();
+        $scope.validate();
+        $scope.newStock = {};
+        return $scope.errors = [];
       });
+    };
+    refocusForm = function() {
+      document.getElementById('newStockForm').reset();
+      return document.getElementById('newStockAutofocus').focus();
     };
     $scope.remove = function(stockName) {
       return $http["delete"]('/api/stockList?stockName=' + stockName).then(function() {
         return updateStockList().then(function() {
-          return $scope.validate();
+          $scope.validate();
+          return refocusForm();
         });
       });
     };
     $scope.add = function() {
       return $http.post('/api/stockList?stock=' + JSON.stringify($scope.newStock)).then(function() {
-        return resetForm();
+        resetForm();
+        return refocusForm();
       });
     };
     $scope.validate = function() {
-      var entryIsValid, i, len, newStock, stock, stockList;
-      newStock = $scope.newStock;
-      if (newStock.stockName) {
-        stockList = $scope.stockList;
-        entryIsValid = true;
-        for (i = 0, len = stockList.length; i < len; i++) {
-          stock = stockList[i];
-          if (stock.stockName === newStock.stockName.toUpperCase()) {
-            $scope.error = 'You already have this stock!';
-            entryIsValid = false;
-            break;
+      var i, len, newStock, stock, stockList;
+      if ($scope.newStock) {
+        newStock = $scope.newStock;
+        $scope.errors = [];
+        if (newStock.stockName) {
+          stockList = $scope.stockList;
+          for (i = 0, len = stockList.length; i < len; i++) {
+            stock = stockList[i];
+            if (stock.stockName === newStock.stockName.toUpperCase()) {
+              $scope.errors.push('You already have this stock!');
+              break;
+            }
           }
         }
-        if (entryIsValid) {
-          return resetError();
+        if ((newStock.number ? !newStock.acb : newStock.acb)) {
+          return $scope.errors.push('You must either fill out both the number and the acb or leave both blank!');
         }
       }
     };

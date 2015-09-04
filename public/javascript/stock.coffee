@@ -13,23 +13,13 @@ stockApp.controller 'StockController', ($scope, $http) ->
         $http.get('/api/entriesList?stockName=' + $scope.stockName).then (entriesList) ->
             $scope.entriesList = entriesList.data
 
-    resetNewEntry = ->
-        $scope.newEntry  = {
-            stockName: $scope.stockName
-            year: new Date().getFullYear()
-            month: new Date().getMonth() + 1
-            day: new Date().getDate()
-            tradeNumber: 1
-            buysell: 'buy'
-            price: null
-            commission: 9.99
-        }
-
     resetForm = ->
+        delete $scope.newEntry.price
+        delete $scope.newEntry.quantity
         updateEntriesList().then ->
-            resetNewEntry()
             adjustTradeNumbers()
-            document.getElementById('newEntryAutofocusElement').focus()
+
+    refocusForm = -> $('#newEntryAutofocusElement').focus()
 
     adjustTradeNumbers = ->
         $scope.adjustTradeNumber($scope.newEntry)
@@ -51,25 +41,42 @@ stockApp.controller 'StockController', ($scope, $http) ->
                 break if conflictEntries.indexOf(adjustEntry.tradeNumber) == -1
                 adjustEntry.tradeNumber++
 
+    $scope.validEntry = (entry) ->
+        return false if not entry
+        return (!entry.tradeNumber || !entry.quantity || !entry.price || !entry.commission)
+
     $scope.add = ->
         $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then ->
             resetForm()
+            refocusForm()
 
     $scope.remove = (_id) ->
         $http.delete('/api/entriesList?_id=' + _id).then ->
             updateEntriesList().then ->
                 adjustTradeNumbers()
+                refocusForm()
 
     $scope.editMode = (entry) ->
         $scope.editEntry = angular.copy(entry)
 
     $scope.confirmEdit = ->
         $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then ->
-            $scope.editEntry = null
-            resetForm()
+            delete $scope.editEntry
+            refocusForm()
 
     $scope.cancelEdit = ->
-        $scope.editEntry = null
+        refocusForm()
+        delete $scope.editEntry
 
-
-    resetForm()
+    updateEntriesList().then ->
+        $scope.newEntry = {
+            stockName: $scope.stockName
+            year: new Date().getFullYear()
+            month: new Date().getMonth() + 1
+            day: new Date().getDate()
+            tradeNumber: 1
+            buysell: 'buy'
+            commission: 9.99
+        }
+        adjustTradeNumbers()
+        refocusForm()
