@@ -4,8 +4,6 @@ StockList = require('../models/StockList')
 Entries = require('../models/Entries')
 
 
-# todo: split this up into differnet parts of the api.  Also, look into removing some model functions
-
 api.get '/api/stockList', (req, res) ->
     StockList.getStockListOrdered().then (stockList) ->
         res.json stockList

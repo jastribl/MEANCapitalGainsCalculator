@@ -11,7 +11,6 @@ router.get '/stocklist', (req, res) ->
 
 router.get '/stock', (req, res) ->
     stockName = req.query.stockName.toUpperCase()
-    # todo: remove this call from here and move to 'stock' page
     StockList.doesStockWithNameExist(stockName).then (stockExists) ->
         if stockExists
             res.render('stock', {title: stockName})
