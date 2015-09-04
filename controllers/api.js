@@ -16,9 +16,9 @@
     });
   });
 
-  api["delete"]('/api/stockList/:stockName', function(req, res) {
+  api["delete"]('/api/stockList', function(req, res) {
     var stockName;
-    stockName = req.params.stockName;
+    stockName = req.query.stockName;
     return StockList.deleteStockWithName(stockName).then(function() {
       return Entries.deleteAllEntriesForStockWithName(stockName).then(function() {
         return res.sendStatus(200);
@@ -41,9 +41,9 @@
     });
   });
 
-  api.get('/api/entriesList/:stockName', function(req, res) {
+  api.get('/api/entriesList', function(req, res) {
     var stockName;
-    stockName = req.params.stockName;
+    stockName = req.query.stockName;
     if (stockName) {
       return Entries.getEntriesForStockOrdered(stockName).then(function(entriesList) {
         return res.json(entriesList);
@@ -63,10 +63,18 @@
     });
   });
 
-  api["delete"]('/api/entriesList/:_id', function(req, res) {
+  api["delete"]('/api/entriesList', function(req, res) {
     var _id;
-    _id = req.params._id;
+    _id = req.query._id;
     return Entries.removeEntryById(_id).then(function() {
+      return res.sendStatus(200);
+    });
+  });
+
+  api.put('/api/entriesList', function(req, res) {
+    var entry;
+    entry = JSON.parse(req.query.entry);
+    return Entries.updateEntry(entry).then(function() {
       return res.sendStatus(200);
     });
   });

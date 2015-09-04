@@ -100,11 +100,7 @@
     updateEntry: function(entry) {
       entry = cleanEntry(entry);
       return entriesTable.update({
-        stockName: entry.stockName,
-        year: entry.year,
-        month: entry.month,
-        day: entry.day,
-        tradeNumber: entry.tradeNumber
+        _id: entry._id
       }, entry, function(err) {
         if (err) {
           throw err;

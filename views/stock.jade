@@ -56,30 +56,30 @@ block content
                                         button.add(ng-click='confirmEdit()') ✓
                                     span.tableCells
                                         button.edit(ng-click='cancelEdit()') ✘
-
-                    tr(ng-hide='editEntry._id')
-                        form(ng-submit='add()')
-                            td.input
-                                select.input(ng-model='newEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(newEntry)' required)
-                            td.input
-                                select.input(ng-model='newEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber(newEntry)' required)
-                            td.input
-                                select.input(ng-model='newEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber(newEntry)' required)
-                            td.input
-                                input.input(ng-model='newEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber(newEntry)' required)
-                            td.input
-                                select.input(ng-model='newEntry.buysell' ng-options="i for i in ['buy', 'sell']" required)
-                            td.input
-                                input(ng-model='newEntry.quanity' type='number' step=1 min=1 autofocus id='newEntryAutofocusElement' required)
-                            td.input
-                                input(ng-model='newEntry.price' type='number' step=0.001 min=0 required)
-                            td.input
-                                input(ng-model='newEntry.commission' type='number' step=0.001 min=0 required)
-                            td.input
-                            td.input
-                            td.input
-                            td.input
-                            td.input
-                                button.add(type='submit') ADD
+                    tbody
+                        tr(ng-hide='editEntry._id')
+                            form(ng-submit='add()')
+                                td.input
+                                    select.input(ng-model='newEntry.year' ng-options='i for i in years' ng-change='adjustTradeNumber(newEntry)' required)
+                                td.input
+                                    select.input(ng-model='newEntry.month' ng-options='i for i in months' ng-change='adjustTradeNumber(newEntry)' required)
+                                td.input
+                                    select.input(ng-model='newEntry.day' ng-options='i for i in days' ng-change='adjustTradeNumber(newEntry)' required)
+                                td.input
+                                    input.input(ng-model='newEntry.tradeNumber' type='number' step=1 min=1 ng-change='adjustTradeNumber(newEntry)' required)
+                                td.input
+                                    select.input(ng-model='newEntry.buysell' ng-options="i for i in ['buy', 'sell']" required)
+                                td.input
+                                    input(ng-model='newEntry.quanity' type='number' step=1 min=1 autofocus id='newEntryAutofocusElement' required)
+                                td.input
+                                    input(ng-model='newEntry.price' type='number' step=0.001 min=0 required)
+                                td.input
+                                    input(ng-model='newEntry.commission' type='number' step=0.001 min=0 required)
+                                td.input
+                                td.input
+                                td.input
+                                td.input
+                                td.input
+                                    button.add(type='submit') ADD
                 p= 'Back To '
                     a(ng-href='/stocklist') Stock List

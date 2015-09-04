@@ -24,7 +24,7 @@
       });
     };
     $scope.remove = function(stockName) {
-      return $http["delete"]('/api/stockList/' + stockName).then(function() {
+      return $http["delete"]('/api/stockList?stockName=' + stockName).then(function() {
         return updateStockList().then(function() {
           return $scope.validate();
         });
@@ -37,19 +37,21 @@
     };
     $scope.validate = function() {
       var entryIsValid, i, len, newStock, stock, stockList;
-      stockList = $scope.stockList;
       newStock = $scope.newStock;
-      entryIsValid = true;
-      for (i = 0, len = stockList.length; i < len; i++) {
-        stock = stockList[i];
-        if (stock.stockName === newStock.stockName.toUpperCase()) {
-          $scope.error = 'You already have this stock!';
-          entryIsValid = false;
-          break;
+      if (newStock.stockName) {
+        stockList = $scope.stockList;
+        entryIsValid = true;
+        for (i = 0, len = stockList.length; i < len; i++) {
+          stock = stockList[i];
+          if (stock.stockName === newStock.stockName.toUpperCase()) {
+            $scope.error = 'You already have this stock!';
+            entryIsValid = false;
+            break;
+          }
         }
-      }
-      if (entryIsValid) {
-        return resetError();
+        if (entryIsValid) {
+          return resetError();
+        }
       }
     };
     return resetForm();

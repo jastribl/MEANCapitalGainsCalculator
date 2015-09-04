@@ -18,7 +18,7 @@
       return results1;
     }).apply(this);
     updateEntriesList = function() {
-      return $http.get('/api/entriesList/' + $scope.stockName).then(function(entriesList) {
+      return $http.get('/api/entriesList?stockName=' + $scope.stockName).then(function(entriesList) {
         return $scope.entriesList = entriesList.data;
       });
     };
@@ -35,7 +35,6 @@
       };
     };
     resetForm = function() {
-      $scope.editId = null;
       return updateEntriesList().then(function() {
         resetNewEntry();
         adjustTradeNumbers();
@@ -80,7 +79,7 @@
       });
     };
     $scope.remove = function(_id) {
-      return $http["delete"]('/api/entriesList/' + _id).then(function() {
+      return $http["delete"]('/api/entriesList?_id=' + _id).then(function() {
         return updateEntriesList().then(function() {
           return adjustTradeNumbers();
         });
@@ -90,7 +89,11 @@
       return $scope.editEntry = angular.copy(entry);
     };
     $scope.confirmEdit = function() {
-      return $scope.editEntry = null;
+      console.log('weflkjwnflwkje');
+      return $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then(function() {
+        $scope.editEntry = null;
+        return resetForm();
+      });
     };
     $scope.cancelEdit = function() {
       return $scope.editEntry = null;

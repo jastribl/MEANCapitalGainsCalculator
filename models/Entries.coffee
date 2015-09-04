@@ -44,7 +44,7 @@ Entries = {
 
     updateEntry: (entry) ->
         entry = cleanEntry(entry)
-        entriesTable.update {stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber}, entry, (err) ->
+        entriesTable.update {_id: entry._id}, entry, (err) ->
             throw err if err
 
 }

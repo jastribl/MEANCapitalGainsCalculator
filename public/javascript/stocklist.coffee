@@ -19,7 +19,7 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
             resetError()
 
     $scope.remove = (stockName) ->
-        $http.delete('/api/stockList/' + stockName).then ->
+        $http.delete('/api/stockList?stockName=' + stockName).then ->
             updateStockList().then ->
                 $scope.validate()
 
@@ -28,16 +28,17 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
             resetForm()
 
     $scope.validate = ->
-        stockList = $scope.stockList
         newStock = $scope.newStock
-        entryIsValid = true
-        (
-            if stock.stockName == newStock.stockName.toUpperCase()
-                $scope.error = 'You already have this stock!'
-                entryIsValid = false
-                break
-        ) for stock in stockList
-        resetError() if entryIsValid
+        if newStock.stockName
+            stockList = $scope.stockList
+            entryIsValid = true
+            (
+                if stock.stockName == newStock.stockName.toUpperCase()
+                    $scope.error = 'You already have this stock!'
+                    entryIsValid = false
+                    break
+            ) for stock in stockList
+            resetError() if entryIsValid
 
 
     resetForm()
