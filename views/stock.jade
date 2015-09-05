@@ -6,9 +6,11 @@ block content
         div(ng-app='stockApp' ng-init="stockName='#{title}'")
             div(ng-controller='StockController')
                 table
-                    tbody
+                    thead
                         th(ng-repeat="header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quantity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']" ng-bind='header')
+
                     tbody(ng-repeat='entry in entriesList')
+
                         tr(ng-hide='entry._id == editEntry._id')
                             td(ng-bind='entry.year')
                             td(ng-bind='entry.month')

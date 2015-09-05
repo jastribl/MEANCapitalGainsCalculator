@@ -28,11 +28,11 @@ block content
                     td {{entry.tradeNumber}}
                     td {{entry.buysell}}
                     td {{entry.quantity}}
-                    td {{entry.price | currency}}
-                    td {{entry.commission | currency}}
+                    td {{entry.price | moneyFilter}}
+                    td {{entry.commission | moneyFilter}}
                     td {{entry.totalshares}}
-                    td {{entry.acbperunit | currency}}
-                    td {{entry.acbtotal | currency}}
-                    td {{entry.capitalgainloss | currency}}
+                    td {{entry.acbperunit | moneyFilter}}
+                    td {{entry.acbtotal | moneyFilter}}
+                    td {{entry.capitalgainloss | moneyFilter}}
     p
         a(href='/') Home

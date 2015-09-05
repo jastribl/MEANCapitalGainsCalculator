@@ -8,27 +8,10 @@ stockApp.filter 'moneyFilter', ->
 
 stockApp.controller 'StockController', ($scope, $http) ->
 
-
     $scope.years = [2000..new Date().getFullYear() + 1]
     $scope.months = [1..12]
     $scope.days = [1..31]
 
-
-    updateEntriesList = ->
-        $http.get('/api/entriesList?stockName=' + $scope.stockName).then (entriesList) ->
-            $scope.entriesList = entriesList.data
-
-    resetForm = ->
-        delete $scope.newEntry.price
-        delete $scope.newEntry.quantity
-        updateEntriesList().then ->
-            adjustTradeNumbers()
-
-    refocusForm = -> $('#newEntryAutofocusElement').focus()
-
-    adjustTradeNumbers = ->
-        $scope.adjustTradeNumber($scope.newEntry)
-        $scope.adjustTradeNumber($scope.editEntry)
 
     $scope.adjustTradeNumber = (adjustEntry) ->
         if adjustEntry
@@ -71,6 +54,19 @@ stockApp.controller 'StockController', ($scope, $http) ->
     $scope.cancelEdit = ->
         refocusForm()
         delete $scope.editEntry
+
+    updateEntriesList = -> $http.get('/api/entriesList?stockName=' + $scope.stockName).then (entriesList) -> $scope.entriesList = entriesList.data
+
+    resetForm = ->
+        delete $scope.newEntry.price
+        delete $scope.newEntry.quantity
+        updateEntriesList().then ->
+            adjustTradeNumbers()
+
+    refocusForm = -> $('#newEntryAutofocusElement').focus()
+
+    adjustTradeNumbers = -> $scope.adjustTradeNumber($scope.newEntry); $scope.adjustTradeNumber($scope.editEntry)
+
 
     updateEntriesList().then ->
         $scope.newEntry = {

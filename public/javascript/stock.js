@@ -23,25 +23,6 @@
       for (j = 1; j <= 31; j++){ results1.push(j); }
       return results1;
     }).apply(this);
-    updateEntriesList = function() {
-      return $http.get('/api/entriesList?stockName=' + $scope.stockName).then(function(entriesList) {
-        return $scope.entriesList = entriesList.data;
-      });
-    };
-    resetForm = function() {
-      delete $scope.newEntry.price;
-      delete $scope.newEntry.quantity;
-      return updateEntriesList().then(function() {
-        return adjustTradeNumbers();
-      });
-    };
-    refocusForm = function() {
-      return $('#newEntryAutofocusElement').focus();
-    };
-    adjustTradeNumbers = function() {
-      $scope.adjustTradeNumber($scope.newEntry);
-      return $scope.adjustTradeNumber($scope.editEntry);
-    };
     $scope.adjustTradeNumber = function(adjustEntry) {
       var conflictEntries, entry, k, len, ref1, results2;
       if (adjustEntry) {
@@ -103,6 +84,25 @@
     $scope.cancelEdit = function() {
       refocusForm();
       return delete $scope.editEntry;
+    };
+    updateEntriesList = function() {
+      return $http.get('/api/entriesList?stockName=' + $scope.stockName).then(function(entriesList) {
+        return $scope.entriesList = entriesList.data;
+      });
+    };
+    resetForm = function() {
+      delete $scope.newEntry.price;
+      delete $scope.newEntry.quantity;
+      return updateEntriesList().then(function() {
+        return adjustTradeNumbers();
+      });
+    };
+    refocusForm = function() {
+      return $('#newEntryAutofocusElement').focus();
+    };
+    adjustTradeNumbers = function() {
+      $scope.adjustTradeNumber($scope.newEntry);
+      return $scope.adjustTradeNumber($scope.editEntry);
     };
     return updateEntriesList().then(function() {
       $scope.newEntry = {

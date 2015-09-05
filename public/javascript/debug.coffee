@@ -1,6 +1,11 @@
 debugApp = angular.module('debugApp', [])
 
 
+debugApp.filter 'moneyFilter', ->
+  (number) ->
+    '$' + number
+
+
 debugApp.controller 'StockListController', ($scope, $http) ->
     $http.get('/api/stockList').then (stockList) ->
         $scope.stockList = stockList.data

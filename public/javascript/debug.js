@@ -4,6 +4,12 @@
 
   debugApp = angular.module('debugApp', []);
 
+  debugApp.filter('moneyFilter', function() {
+    return function(number) {
+      return '$' + number;
+    };
+  });
+
   debugApp.controller('StockListController', function($scope, $http) {
     return $http.get('/api/stockList').then(function(stockList) {
       return $scope.stockList = stockList.data;
