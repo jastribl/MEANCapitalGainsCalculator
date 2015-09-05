@@ -53,13 +53,14 @@ stockApp.controller 'StockController', ($scope, $http) ->
         $http.delete('/api/entriesList?_id=' + _id).then ->
             updateEntriesList().then ->
                 adjustTradeNumbers()
-                refocusForm()
+            refocusForm()
 
     $scope.editMode = (entry) -> $scope.editEntry = angular.copy(entry)
 
     $scope.confirmEdit = ->
         $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then ->
             delete $scope.editEntry
+            updateEntriesList()
             refocusForm()
 
     $scope.cancelEdit = ->

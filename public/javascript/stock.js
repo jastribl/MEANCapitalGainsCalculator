@@ -78,10 +78,10 @@
     };
     $scope.remove = function(_id) {
       return $http["delete"]('/api/entriesList?_id=' + _id).then(function() {
-        return updateEntriesList().then(function() {
-          adjustTradeNumbers();
-          return refocusForm();
+        updateEntriesList().then(function() {
+          return adjustTradeNumbers();
         });
+        return refocusForm();
       });
     };
     $scope.editMode = function(entry) {
@@ -90,6 +90,7 @@
     $scope.confirmEdit = function() {
       return $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then(function() {
         delete $scope.editEntry;
+        updateEntriesList();
         return refocusForm();
       });
     };
