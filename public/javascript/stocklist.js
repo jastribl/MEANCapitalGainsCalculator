@@ -5,7 +5,7 @@
   stockListApp = angular.module('stockListApp', []);
 
   stockListApp.controller('StockListController', function($scope, $http) {
-    var refocusForm, resetForm, updateStockList;
+    var alreadyHaveStock, refocusForm, resetForm, updateStockList;
     updateStockList = function() {
       return $http.get('/api/stockList').then(function(stockList) {
         return $scope.stockList = stockList.data;
@@ -35,25 +35,30 @@
         return refocusForm();
       });
     };
-    $scope.validate = function() {
-      var i, len, newStock, stock, stockList;
-      if ($scope.newStock) {
-        newStock = $scope.newStock;
+    $scope.validate = function(stock) {
+      if (stock) {
         $scope.errors = [];
-        if (newStock.stockName) {
-          stockList = $scope.stockList;
-          for (i = 0, len = stockList.length; i < len; i++) {
-            stock = stockList[i];
-            if (stock.stockName === newStock.stockName.toUpperCase()) {
-              $scope.errors.push('You already have this stock!');
-              break;
-            }
-          }
+        if (!stock.stockName && (stock.number || stock.acb)) {
+          $scope.errors.push('You must enter a name!');
         }
-        if ((newStock.number ? !newStock.acb : newStock.acb)) {
-          return $scope.errors.push('You must either fill out both the number and the acb or leave both blank!');
+        if (stock.stockName && alreadyHaveStock(stock)) {
+          $scope.errors.push('You already have this stock!');
+        }
+        if ((stock.number ? !stock.acb : stock.acb)) {
+          return $scope.errors.push('You must either fill out both the number and the acb!');
         }
       }
+    };
+    alreadyHaveStock = function(testStock) {
+      var i, len, ref, stock;
+      ref = $scope.stockList;
+      for (i = 0, len = ref.length; i < len; i++) {
+        stock = ref[i];
+        if (stock.stockName === testStock.stockName.toUpperCase()) {
+          return true;
+        }
+      }
+      return false;
     };
     $scope.validStock = function(stock) {
       if (!stock) {
@@ -62,6 +67,12 @@
       return !stock.stockName;
     };
     return resetForm();
+  });
+
+  stockListApp.filter('moneyFilter', function() {
+    return function(number) {
+      return '$' + number;
+    };
   });
 
 }).call(this);

@@ -113,4 +113,10 @@
     });
   });
 
+  stockApp.filter('moneyFilter', function() {
+    return function(number) {
+      return '$' + number;
+    };
+  });
+
 }).call(this);

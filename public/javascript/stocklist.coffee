@@ -26,24 +26,26 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
             resetForm()
             refocusForm()
 
-    $scope.validate = ->
-        if $scope.newStock
-            newStock = $scope.newStock
+    $scope.validate = (stock) ->
+        if stock
             $scope.errors = []
-            if newStock.stockName
-                stockList = $scope.stockList
+            $scope.errors.push('You must enter a name!') if not stock.stockName and (stock.number || stock.acb)
+            $scope.errors.push('You already have this stock!') if stock.stockName and alreadyHaveStock(stock)
+            $scope.errors.push('You must either fill out both the number and the acb!') if (if stock.number then !stock.acb else stock.acb)
 
-                (
-                    if stock.stockName == newStock.stockName.toUpperCase()
 
-                        $scope.errors.push('You already have this stock!')
-                        break
-                ) for stock in stockList
-            if (if newStock.number then !newStock.acb else newStock.acb)
-                $scope.errors.push('You must either fill out both the number and the acb or leave both blank!')
+    alreadyHaveStock = (testStock) ->
+        (
+            return true if stock.stockName == testStock.stockName.toUpperCase()
+        ) for stock in $scope.stockList
+        return false
 
     $scope.validStock = (stock) ->
         return false if not stock
         return (!stock.stockName)
 
     resetForm()
+
+stockListApp.filter 'moneyFilter', ->
+  (number) ->
+    '$' + number

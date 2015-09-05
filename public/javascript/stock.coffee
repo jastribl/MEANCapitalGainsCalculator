@@ -79,3 +79,7 @@ stockApp.controller 'StockController', ($scope, $http) ->
         }
         adjustTradeNumbers()
         refocusForm()
+
+stockApp.filter 'moneyFilter', ->
+  (number) ->
+    '$' + number
