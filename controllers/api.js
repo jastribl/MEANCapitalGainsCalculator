@@ -33,11 +33,11 @@
     if (!stock.number) {
       stock.number = 0;
     }
-    if (!stock.number) {
+    if (!stock.acb) {
       stock.acb = 0;
     }
     return StockList.addStock(stock).then(function() {
-      return res.sendStatus(200);
+      return res.json(stock);
     });
   });
 

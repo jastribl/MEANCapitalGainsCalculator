@@ -4,6 +4,12 @@
 
   stockApp = angular.module('stockApp', []);
 
+  stockApp.filter('moneyFilter', function() {
+    return function(number) {
+      return '$' + number;
+    };
+  });
+
   stockApp.controller('StockController', function($scope, $http) {
     var adjustTradeNumbers, i, j, ref, refocusForm, resetForm, results, results1, updateEntriesList;
     $scope.years = (function() {
@@ -111,12 +117,6 @@
       adjustTradeNumbers();
       return refocusForm();
     });
-  });
-
-  stockApp.filter('moneyFilter', function() {
-    return function(number) {
-      return '$' + number;
-    };
   });
 
 }).call(this);

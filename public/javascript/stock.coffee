@@ -1,6 +1,11 @@
 stockApp = angular.module('stockApp', [])
 
 
+stockApp.filter 'moneyFilter', ->
+  (number) ->
+    '$' + number
+
+
 stockApp.controller 'StockController', ($scope, $http) ->
 
 
@@ -79,7 +84,3 @@ stockApp.controller 'StockController', ($scope, $http) ->
         }
         adjustTradeNumbers()
         refocusForm()
-
-stockApp.filter 'moneyFilter', ->
-  (number) ->
-    '$' + number

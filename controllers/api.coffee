@@ -18,9 +18,9 @@ api.post '/api/stockList', (req, res) ->
     stock = JSON.parse(req.query.stock)
     stock.stockName = stock.stockName.toUpperCase()
     stock.number = 0 if not stock.number
-    stock.acb = 0 if not stock.number
+    stock.acb = 0 if not stock.acb
     StockList.addStock(stock).then ->
-        res.sendStatus(200)
+        res.json stock
 
 
 api.get '/api/entriesList', (req, res) ->

@@ -4,75 +4,72 @@
 
   stockListApp = angular.module('stockListApp', []);
 
+  stockListApp.filter('moneyFilter', function() {
+    return function(number) {
+      if (!number) {
+        return '$0.00';
+      } else {
+        return '$' + number;
+      }
+    };
+  });
+
   stockListApp.controller('StockListController', function($scope, $http) {
-    var alreadyHaveStock, refocusForm, resetForm, updateStockList;
-    updateStockList = function() {
-      return $http.get('/api/stockList').then(function(stockList) {
-        return $scope.stockList = stockList.data;
-      });
-    };
-    resetForm = function() {
-      return updateStockList().then(function() {
-        $scope.validate();
-        $scope.newStock = {};
-        return $scope.errors = [];
-      });
-    };
-    refocusForm = function() {
-      return $('#newStockAutofocusElement').focus();
-    };
-    $scope.remove = function(stockName) {
-      return $http["delete"]('/api/stockList?stockName=' + stockName).then(function() {
-        return updateStockList().then(function() {
-          $scope.validate();
-          return refocusForm();
-        });
-      });
-    };
+    var alreadyHaveStock, refocusForm, resetErrors, resetNewStock;
     $scope.add = function() {
-      return $http.post('/api/stockList?stock=' + JSON.stringify($scope.newStock)).then(function() {
-        resetForm();
+      return $http.post('/api/stockList?stock=' + JSON.stringify($scope.newStock)).then(function(addedStock) {
+        $scope.stockList.push(addedStock.data);
+        resetNewStock();
         return refocusForm();
       });
     };
-    $scope.validate = function(stock) {
-      if (stock) {
-        $scope.errors = [];
-        if (!stock.stockName && (stock.number || stock.acb)) {
-          $scope.errors.push('You must enter a name!');
-        }
-        if (stock.stockName && alreadyHaveStock(stock)) {
-          $scope.errors.push('You already have this stock!');
-        }
-        if ((stock.number ? !stock.acb : stock.acb)) {
-          return $scope.errors.push('You must either fill out both the number and the acb!');
+    $scope.remove = function(stockName) {
+      var i, index, len, ref, stock;
+      $http["delete"]('/api/stockList?stockName=' + stockName);
+      ref = $scope.stockList;
+      for (index = i = 0, len = ref.length; i < len; index = ++i) {
+        stock = ref[index];
+        if (stock.stockName === stockName) {
+          $scope.stockList.splice(index, 1);
+          break;
         }
       }
+      $scope.validate($scope.newStock);
+      refocusForm();
+    };
+    $scope.validate = function(stock) {
+      resetErrors();
+      if (!(stock && stock.stockName)) {
+        return false;
+      }
+      if (alreadyHaveStock(stock)) {
+        $scope.errors.push('You already have this stock!');
+      }
+      return $scope.errors.length === 0;
+    };
+    resetErrors = function() {
+      return $scope.errors = [];
+    };
+    resetNewStock = function() {
+      return $scope.newStock = {};
+    };
+    refocusForm = function() {
+      return $('#newStockAutofocusElement').focus();
     };
     alreadyHaveStock = function(testStock) {
       var i, len, ref, stock;
       ref = $scope.stockList;
       for (i = 0, len = ref.length; i < len; i++) {
         stock = ref[i];
-        if (stock.stockName === testStock.stockName.toUpperCase()) {
+        if (stock.stockName === testStock.stockName) {
           return true;
         }
       }
       return false;
     };
-    $scope.validStock = function(stock) {
-      if (!stock) {
-        return false;
-      }
-      return !stock.stockName;
-    };
-    return resetForm();
-  });
-
-  stockListApp.filter('moneyFilter', function() {
-    return function(number) {
-      return '$' + number;
-    };
+    return $http.get('/api/stockList').then(function(stockList) {
+      return $scope.stockList = stockList.data;
+    });
   });
 
 }).call(this);
