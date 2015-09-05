@@ -76,8 +76,9 @@ button {
     white-space: nowrap;
     text-overflow: ellipsis;
 }
-span.tableCells {
-    display: table-cell;
+
+.doubleButtonCell {
+  border: 0;
 }
 
 button:hover, button.input:hover {

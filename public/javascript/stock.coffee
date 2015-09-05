@@ -55,8 +55,7 @@ stockApp.controller 'StockController', ($scope, $http) ->
                 adjustTradeNumbers()
                 refocusForm()
 
-    $scope.editMode = (entry) ->
-        $scope.editEntry = angular.copy(entry)
+    $scope.editMode = (entry) -> $scope.editEntry = angular.copy(entry)
 
     $scope.confirmEdit = ->
         $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then ->

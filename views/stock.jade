@@ -23,10 +23,10 @@ block content
                             td(ng-bind='entry.acbtotal | currency')
                             td(ng-bind='entry.capitalgainloss | currency')
                             td
-                                div(ng-hide='editEntry._id')
-                                    span.tableCells
+                                table.doubleButtonCell(ng-hide='editEntry._id')
+                                    td.doubleButtonCell
                                         button.edit(ng-click='editMode(entry)') E
-                                    span.tableCells
+                                    td.doubleButtonCell
                                         button.remove(ng-click='remove(entry._id)') ✘
 
                         tr(ng-show='entry._id == editEntry._id')
@@ -51,11 +51,12 @@ block content
                             td.input
                             td.input
                             td.input
-                                div
-                                    span.tableCells
+                                table.doubleButtonCell
+                                    td.doubleButtonCell
                                         button.add(ng-click='confirmEdit()' ng-disabled='validEntry(editEntry)') ✓
-                                    span.tableCells
+                                    td.doubleButtonCell
                                         button.edit(ng-click='cancelEdit()') ✘
+
                     tbody
                         tr(ng-hide='editEntry._id')
                             form(ng-submit='add()')
