@@ -58,8 +58,8 @@
   api.post('/api/entriesList', function(req, res) {
     var entry;
     entry = JSON.parse(req.query.entry);
-    return Entries.addEntry(entry).then(function() {
-      return res.sendStatus(200);
+    return Entries.addEntry(entry).then(function(addedEntry) {
+      return res.json(addedEntry);
     });
   });
 
@@ -71,11 +71,11 @@
     });
   });
 
-  api.put('/api/entriesList', function(req, res) {
+  api.post('/api/entriesList/updateEntry', function(req, res) {
     var entry;
     entry = JSON.parse(req.query.entry);
-    return Entries.updateEntry(entry).then(function() {
-      return res.sendStatus(200);
+    return Entries.updateEntry(entry).then(function(updatedEntry) {
+      return res.json(updatedEntry);
     });
   });
 

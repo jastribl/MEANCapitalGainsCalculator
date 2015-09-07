@@ -34,18 +34,18 @@ api.get '/api/entriesList', (req, res) ->
 
 api.post '/api/entriesList', (req, res) ->
     entry = JSON.parse(req.query.entry)
-    Entries.addEntry(entry).then ->
-        res.sendStatus(200)
+    Entries.addEntry(entry).then (addedEntry) ->
+        res.json addedEntry
 
 api.delete '/api/entriesList', (req, res) ->
     _id = req.query._id
     Entries.removeEntryById(_id).then ->
         res.sendStatus(200)
 
-api.put '/api/entriesList', (req, res) ->
+api.post '/api/entriesList/updateEntry', (req, res) ->
     entry = JSON.parse(req.query.entry)
-    Entries.updateEntry(entry).then ->
-        res.sendStatus(200)
+    Entries.updateEntry(entry).then (updatedEntry) ->
+        res.json updatedEntry
 
 
 module.exports = api

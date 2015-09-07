@@ -9,7 +9,7 @@ block content
                     thead
                         th(ng-repeat="header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quantity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']" ng-bind='header')
 
-                    tbody(ng-repeat='entry in entriesList')
+                    tbody(ng-repeat="entry in entriesList | orderBy: ['year', 'month', 'day', 'tradeNumber']")
 
                         tr(ng-hide='entry._id == editEntry._id')
                             td(ng-bind='entry.year')

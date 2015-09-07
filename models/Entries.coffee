@@ -10,12 +10,12 @@ Entries = {
             throw err if err
 
     getAllEntriesOrdered: ->
-        entriesTable.find {}, {sort: stockName: 1, year: 1, month: 1, day: 1, tradeNumber: 1}, (err, entries) ->
+        entriesTable.find {}, (err, entries) ->
             throw err if err
             entries
 
     getEntriesForStockOrdered: (stockName) ->
-        entriesTable.find {stockName: stockName}, {sort: year: 1, month: 1, day: 1, tradeNumber: 1}, (err, entries) ->
+        entriesTable.find {stockName: stockName}, (err, entries) ->
             throw err if err
             entries
 
@@ -25,12 +25,16 @@ Entries = {
 
     addEntry: (entry) ->
         entry = cleanEntry(entry)
-        entriesTable.insert(entry)
+        entriesTable.insert(entry).then ->
+            findEntry(entry)
 
     updateEntry: (entry) ->
         entry = cleanEntry(entry)
         entriesTable.update {_id: entry._id}, entry, (err) ->
             throw err if err
+        .then ->
+            findEntry(entry)
+
 
 }
 
@@ -44,3 +48,8 @@ cleanEntry = (entry) ->
     entry.day = +entry.day
     entry.tradeNumber = +entry.tradeNumber
     entry
+
+findEntry = (entry) ->
+    entriesTable.findOne {stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber}, (err, foundEntry) ->
+        throw err if err
+        foundEntry

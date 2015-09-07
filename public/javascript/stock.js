@@ -11,7 +11,7 @@
   });
 
   stockApp.controller('StockController', function($scope, $http) {
-    var adjustTradeNumbers, i, j, ref, refocusForm, resetForm, results, results1, updateEntriesList;
+    var addEntry, adjustTradeNumbers, i, j, ref, refocusForm, removeEntryById, resetForm, results, results1;
     $scope.years = (function() {
       results = [];
       for (var i = 2000, ref = new Date().getFullYear() + 1; 2000 <= ref ? i <= ref : i >= ref; 2000 <= ref ? i++ : i--){ results.push(i); }
@@ -58,44 +58,51 @@
       return !entry.tradeNumber || !entry.quantity || !entry.price || !entry.commission;
     };
     $scope.add = function() {
-      return $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then(function() {
+      return $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then(function(addedEntry) {
+        addEntry(addedEntry.data);
         resetForm();
         return refocusForm();
       });
     };
     $scope.remove = function(_id) {
-      return $http["delete"]('/api/entriesList?_id=' + _id).then(function() {
-        updateEntriesList().then(function() {
-          return adjustTradeNumbers();
-        });
-        return refocusForm();
-      });
+      $http["delete"]('/api/entriesList?_id=' + _id);
+      removeEntryById(_id);
+      adjustTradeNumbers();
+      refocusForm();
     };
     $scope.editMode = function(entry) {
       return $scope.editEntry = angular.copy(entry);
     };
     $scope.confirmEdit = function() {
-      return $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then(function() {
+      return $http.post('/api/entriesList/updateEntry?entry=' + JSON.stringify($scope.editEntry)).then(function(updatedEntry) {
+        removeEntryById(updatedEntry.data._id);
+        addEntry(updatedEntry.data);
         delete $scope.editEntry;
-        updateEntriesList();
         return refocusForm();
       });
     };
     $scope.cancelEdit = function() {
-      refocusForm();
-      return delete $scope.editEntry;
+      delete $scope.editEntry;
+      return refocusForm();
     };
-    updateEntriesList = function() {
-      return $http.get('/api/entriesList?stockName=' + $scope.stockName).then(function(entriesList) {
-        return $scope.entriesList = entriesList.data;
-      });
+    addEntry = function(entry) {
+      return $scope.entriesList.push(entry);
+    };
+    removeEntryById = function(_id) {
+      var entry, index, k, len, ref1;
+      ref1 = $scope.entriesList;
+      for (index = k = 0, len = ref1.length; k < len; index = ++k) {
+        entry = ref1[index];
+        if (entry._id === _id) {
+          $scope.entriesList.splice(index, 1);
+          break;
+        }
+      }
     };
     resetForm = function() {
+      adjustTradeNumbers();
       delete $scope.newEntry.price;
-      delete $scope.newEntry.quantity;
-      return updateEntriesList().then(function() {
-        return adjustTradeNumbers();
-      });
+      return delete $scope.newEntry.quantity;
     };
     refocusForm = function() {
       return $('#newEntryAutofocusElement').focus();
@@ -104,7 +111,8 @@
       $scope.adjustTradeNumber($scope.newEntry);
       return $scope.adjustTradeNumber($scope.editEntry);
     };
-    return updateEntriesList().then(function() {
+    return $http.get('/api/entriesList?stockName=' + $scope.stockName).then(function(entriesList) {
+      $scope.entriesList = entriesList.data;
       $scope.newEntry = {
         stockName: $scope.stockName,
         year: new Date().getFullYear(),

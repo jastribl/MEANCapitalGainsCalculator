@@ -33,42 +33,54 @@ stockApp.controller 'StockController', ($scope, $http) ->
         return (!entry.tradeNumber || !entry.quantity || !entry.price || !entry.commission)
 
     $scope.add = ->
-        $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then ->
+        $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then (addedEntry) ->
+            addEntry(addedEntry.data)
             resetForm()
             refocusForm()
 
     $scope.remove = (_id) ->
-        $http.delete('/api/entriesList?_id=' + _id).then ->
-            updateEntriesList().then ->
-                adjustTradeNumbers()
-            refocusForm()
+        $http.delete('/api/entriesList?_id=' + _id)
+        removeEntryById(_id)
+        adjustTradeNumbers()
+        refocusForm()
+        return
 
     $scope.editMode = (entry) -> $scope.editEntry = angular.copy(entry)
 
     $scope.confirmEdit = ->
-        $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then ->
+        $http.post('/api/entriesList/updateEntry?entry=' + JSON.stringify($scope.editEntry)).then (updatedEntry) ->
+            removeEntryById(updatedEntry.data._id)
+            addEntry(updatedEntry.data)
             delete $scope.editEntry
-            updateEntriesList()
             refocusForm()
 
     $scope.cancelEdit = ->
-        refocusForm()
         delete $scope.editEntry
+        refocusForm()
 
-    updateEntriesList = -> $http.get('/api/entriesList?stockName=' + $scope.stockName).then (entriesList) -> $scope.entriesList = entriesList.data
+    addEntry = (entry) ->
+        $scope.entriesList.push(entry)
+
+    removeEntryById = (_id) ->
+        (
+            if entry._id == _id
+                $scope.entriesList.splice(index, 1)
+                break
+        ) for entry, index in $scope.entriesList
+        return
 
     resetForm = ->
+        adjustTradeNumbers()
         delete $scope.newEntry.price
         delete $scope.newEntry.quantity
-        updateEntriesList().then ->
-            adjustTradeNumbers()
 
     refocusForm = -> $('#newEntryAutofocusElement').focus()
 
     adjustTradeNumbers = -> $scope.adjustTradeNumber($scope.newEntry); $scope.adjustTradeNumber($scope.editEntry)
 
 
-    updateEntriesList().then ->
+    $http.get('/api/entriesList?stockName=' + $scope.stockName).then (entriesList) ->
+        $scope.entriesList = entriesList.data
         $scope.newEntry = {
             stockName: $scope.stockName
             year: new Date().getFullYear()
