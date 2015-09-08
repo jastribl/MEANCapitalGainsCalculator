@@ -7,7 +7,8 @@ block content
             div(ng-controller='StockController')
                 table
                     thead
-                        th(ng-repeat="header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quantity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses','Function']" ng-bind='header')
+                        th(ng-repeat="header in ['Year', 'Month','Day','Trade #','Buy / Sell','Quantity','Price','Commission','Total Shares','ACB (Per Unit)','ACB (Total)','Capital Gains / Losses']" ng-bind='header')
+                        th(colspan=2) Function
 
                     tbody(ng-repeat="entry in entriesList | orderBy: ['year', 'month', 'day', 'tradeNumber']")
 
@@ -24,12 +25,11 @@ block content
                             td(ng-bind='entry.acbperunit | currency')
                             td(ng-bind='entry.acbtotal | currency')
                             td(ng-bind='entry.capitalgainloss | currency')
-                            td
-                                table.doubleButtonCell(ng-hide='editEntry._id')
-                                    td.doubleButtonCell
-                                        button.edit(ng-click='editMode(entry)') E
-                                    td.doubleButtonCell
-                                        button.remove(ng-click='remove(entry._id)') ✘
+                            td(ng-hide='editEntry._id')
+                                button.edit(ng-click='editMode(entry)') E
+                            td(ng-hide='editEntry._id')
+                                button.remove(ng-click='remove(entry._id)') ✘
+                            td(colspan=2 ng-show='editEntry._id')
 
                         tr(ng-show='entry._id == editEntry._id')
                             td.input
@@ -52,12 +52,10 @@ block content
                             td.input
                             td.input
                             td.input
-                            td.input
-                                table.doubleButtonCell
-                                    td.doubleButtonCell
-                                        button.add(ng-click='confirmEdit()' ng-disabled='validEntry(editEntry)') ✓
-                                    td.doubleButtonCell
-                                        button.edit(ng-click='cancelEdit()') ✘
+                            td
+                                button.add(ng-click='confirmEdit()' ng-disabled='validEntry(editEntry)') ✓
+                            td
+                                button.edit(ng-click='cancelEdit()') ✘
 
                     tbody
                         tr(ng-hide='editEntry._id')
@@ -82,7 +80,7 @@ block content
                                 td.input
                                 td.input
                                 td.input
-                                td.input
+                                td.input(colspan=2)
                                     button.add(type='submit' ng-disabled='validEntry(newEntry)') ADD
                 p= 'Back To '
                     a(ng-href='/stocklist') Stock List

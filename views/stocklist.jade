@@ -28,8 +28,8 @@ block content
                             input(ng-model='newStock.number' type='number' step=1 min=0 placeholder='Number Of Existing Stocks' ng-required='newStock.acb')
                         td.input
                             input(ng-model='newStock.acb' type='number' step='any' min=0 placeholder='Adjusted Cost Base (Total)' ng-required='newStock.number')
-                        td.input.center
+                        td.input
                             button.add.center(type='submit' ng-disabled='!validate(newStock)') +
-        p.error.center(ng-repeat='error in errors' ng-bind='error')
+        p.messageBox.error(ng-repeat='error in errors' ng-bind='error')
     p
     a(href='/') Home

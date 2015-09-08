@@ -77,11 +77,8 @@ button {
     text-overflow: ellipsis;
 }
 
-.doubleButtonCell {
-  border: 0;
-}
 
-button:hover, button.input:hover {
+button:hover {
     color: #4A4A4A;
 }
 
@@ -97,9 +94,13 @@ button.edit {
     background-color: #3AE6FF;
 }
 
-.error {
+.messageBox {
+    text-align: center;
+    border-radius: 10px;
     padding-top: 10px;
     padding-bottom: 10px;
+}
+
+.error {
     background-color: #FF8400;
-    border-radius: 10px;
 }

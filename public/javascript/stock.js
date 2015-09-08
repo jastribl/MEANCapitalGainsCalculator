@@ -83,7 +83,7 @@
     };
     $scope.cancelEdit = function() {
       delete $scope.editEntry;
-      return refocusForm();
+      refocusForm();
     };
     addEntry = function(entry) {
       return $scope.entriesList.push(entry);

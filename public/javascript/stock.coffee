@@ -57,6 +57,7 @@ stockApp.controller 'StockController', ($scope, $http) ->
     $scope.cancelEdit = ->
         delete $scope.editEntry
         refocusForm()
+        return
 
     addEntry = (entry) ->
         $scope.entriesList.push(entry)
