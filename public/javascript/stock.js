@@ -6,7 +6,11 @@
 
   stockApp.filter('moneyFilter', function() {
     return function(number) {
-      return '$' + number;
+      if (!number) {
+        return '$0.00';
+      } else {
+        return '$' + number;
+      }
     };
   });
 
@@ -58,25 +62,44 @@
       return !entry.tradeNumber || !entry.quantity || !entry.price || !entry.commission;
     };
     $scope.add = function() {
-      return $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then(function(addedEntry) {
-        addEntry(addedEntry.data);
+      return $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then(function(updatedEntries) {
+        var k, len, ref1, updatedEntry;
+        ref1 = updatedEntries.data;
+        for (k = 0, len = ref1.length; k < len; k++) {
+          updatedEntry = ref1[k];
+          removeEntryById(updatedEntry._id);
+          addEntry(updatedEntry);
+        }
         resetForm();
         return refocusForm();
       });
     };
-    $scope.remove = function(_id) {
-      $http["delete"]('/api/entriesList?_id=' + _id);
-      removeEntryById(_id);
-      adjustTradeNumbers();
-      refocusForm();
+    $scope.remove = function(entry) {
+      return $http["delete"]('/api/entriesList?entry=' + JSON.stringify(entry)).then(function(updatedEntries) {
+        var k, len, ref1, updatedEntry;
+        removeEntryById(entry._id);
+        ref1 = updatedEntries.data;
+        for (k = 0, len = ref1.length; k < len; k++) {
+          updatedEntry = ref1[k];
+          removeEntryById(updatedEntry._id);
+          addEntry(updatedEntry);
+        }
+        adjustTradeNumbers();
+        return refocusForm();
+      });
     };
     $scope.editMode = function(entry) {
       return $scope.editEntry = angular.copy(entry);
     };
     $scope.confirmEdit = function() {
-      return $http.post('/api/entriesList/updateEntry?entry=' + JSON.stringify($scope.editEntry)).then(function(updatedEntry) {
-        removeEntryById(updatedEntry.data._id);
-        addEntry(updatedEntry.data);
+      return $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then(function(updatedEntries) {
+        var k, len, ref1, updatedEntry;
+        ref1 = updatedEntries.data;
+        for (k = 0, len = ref1.length; k < len; k++) {
+          updatedEntry = ref1[k];
+          removeEntryById(updatedEntry._id);
+          addEntry(updatedEntry);
+        }
         delete $scope.editEntry;
         return refocusForm();
       });

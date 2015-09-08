@@ -2,8 +2,8 @@ stockApp = angular.module('stockApp', [])
 
 
 stockApp.filter 'moneyFilter', ->
-  (number) ->
-    '$' + number
+    (number) ->
+        if not number then '$0.00' else '$' + number
 
 
 stockApp.controller 'StockController', ($scope, $http) ->
@@ -33,24 +33,32 @@ stockApp.controller 'StockController', ($scope, $http) ->
         return (!entry.tradeNumber || !entry.quantity || !entry.price || !entry.commission)
 
     $scope.add = ->
-        $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then (addedEntry) ->
-            addEntry(addedEntry.data)
+        $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then (updatedEntries) ->
+            (
+                removeEntryById(updatedEntry._id)
+                addEntry(updatedEntry)
+            ) for updatedEntry in updatedEntries.data
             resetForm()
             refocusForm()
 
-    $scope.remove = (_id) ->
-        $http.delete('/api/entriesList?_id=' + _id)
-        removeEntryById(_id)
-        adjustTradeNumbers()
-        refocusForm()
-        return
+    $scope.remove = (entry) ->
+        $http.delete('/api/entriesList?entry=' + JSON.stringify(entry)).then (updatedEntries) ->
+            removeEntryById(entry._id)
+            (
+                removeEntryById(updatedEntry._id)
+                addEntry(updatedEntry)
+            ) for updatedEntry in updatedEntries.data
+            adjustTradeNumbers()
+            refocusForm()
 
     $scope.editMode = (entry) -> $scope.editEntry = angular.copy(entry)
 
     $scope.confirmEdit = ->
-        $http.post('/api/entriesList/updateEntry?entry=' + JSON.stringify($scope.editEntry)).then (updatedEntry) ->
-            removeEntryById(updatedEntry.data._id)
-            addEntry(updatedEntry.data)
+        $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then (updatedEntries) ->
+            (
+                removeEntryById(updatedEntry._id)
+                addEntry(updatedEntry)
+            ) for updatedEntry in updatedEntries.data
             delete $scope.editEntry
             refocusForm()
 

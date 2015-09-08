@@ -16,7 +16,7 @@
         }
       });
     },
-    getAllEntriesOrdered: function() {
+    getAllEntries: function() {
       return entriesTable.find({}, function(err, entries) {
         if (err) {
           throw err;
@@ -27,6 +27,13 @@
     getEntriesForStockOrdered: function(stockName) {
       return entriesTable.find({
         stockName: stockName
+      }, {
+        sort: {
+          year: 1,
+          month: 1,
+          day: 1,
+          tradeNumber: 1
+        }
       }, function(err, entries) {
         if (err) {
           throw err;

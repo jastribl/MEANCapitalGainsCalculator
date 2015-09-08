@@ -6,7 +6,11 @@
 
   debugApp.filter('moneyFilter', function() {
     return function(number) {
-      return '$' + number;
+      if (!number) {
+        return '$0.00';
+      } else {
+        return '$' + number;
+      }
     };
   });
 

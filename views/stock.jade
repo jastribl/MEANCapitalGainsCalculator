@@ -28,7 +28,7 @@ block content
                             td(ng-hide='editEntry._id')
                                 button.edit(ng-click='editMode(entry)') E
                             td(ng-hide='editEntry._id')
-                                button.remove(ng-click='remove(entry._id)') ✘
+                                button.remove(ng-click='remove(entry)') ✘
                             td(colspan=2 ng-show='editEntry._id')
 
                         tr(ng-show='entry._id == editEntry._id')

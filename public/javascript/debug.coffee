@@ -2,8 +2,8 @@ debugApp = angular.module('debugApp', [])
 
 
 debugApp.filter 'moneyFilter', ->
-  (number) ->
-    '$' + number
+    (number) ->
+        if not number then '$0.00' else '$' + number
 
 
 debugApp.controller 'StockListController', ($scope, $http) ->

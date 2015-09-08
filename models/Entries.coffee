@@ -9,13 +9,13 @@ Entries = {
         entriesTable.remove {stockName: stockName}, (err) ->
             throw err if err
 
-    getAllEntriesOrdered: ->
+    getAllEntries: ->
         entriesTable.find {}, (err, entries) ->
             throw err if err
             entries
 
     getEntriesForStockOrdered: (stockName) ->
-        entriesTable.find {stockName: stockName}, (err, entries) ->
+        entriesTable.find {stockName: stockName}, {sort: year: 1, month: 1, day: 1, tradeNumber: 1}, (err, entries) ->
             throw err if err
             entries
 
