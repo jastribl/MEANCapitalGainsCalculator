@@ -94,12 +94,12 @@
       return StockList.getStockByName(stockName).then(function(initialValues) {
         var going, lastEntry, listOfModifiedEntries, ref;
         lastEntry = {
-          quantity: +initialValues.number,
-          totalshares: +initialValues.number,
-          acbperunit: (ref = +initialValues.number === 0) != null ? ref : {
-            0: +initialValues.acb / +initialValues.number
+          quantity: initialValues.number,
+          totalshares: initialValues.number,
+          acbperunit: (ref = initialValues.number === 0) != null ? ref : {
+            0: initialValues.acb / initialValues.number
           },
-          acbtotal: +initialValues.acb
+          acbtotal: initialValues.acb
         };
         going = reCalculateAll;
         listOfModifiedEntries = [];
@@ -107,11 +107,11 @@
           if (going || entry._id.toString() === insertedEntry._id.toString()) {
             going = true;
             if (entry.buysell === 'buy') {
-              entry.totalshares = +lastEntry.totalshares + +entry.quantity;
-              entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quantity) + +entry.commission;
-              entry.acbperunit = +entry.acbtotal / +entry.totalshares;
+              entry.totalshares = lastEntry.totalshares + entry.quantity;
+              entry.acbtotal = lastEntry.acbtotal + (entry.price * entry.quantity) + entry.commission;
+              entry.acbperunit = entry.acbtotal / entry.totalshares;
             } else if (entry.buysell === 'sell') {
-              entry.totalshares = +lastEntry.totalshares - +entry.quantity;
+              entry.totalshares = lastEntry.totalshares - entry.quantity;
               if (entry.totalshares < 0) {
                 entry.problem = true;
               }
@@ -119,10 +119,10 @@
                 entry.acbtotal = 0;
                 entry.acbperunit = 0;
               } else {
-                entry.acbtotal = +lastEntry.getACBTotal - (+entry.quantity * +lastEntry.acbtotal / +lastEntry.totalshares);
-                entry.acbperunit = +entry.acbtotal / +entry.totalshares;
+                entry.acbtotal = lastEntry.getACBTotal - (entry.quantity * lastEntry.acbtotal / lastEntry.totalshares);
+                entry.acbperunit = entry.acbtotal / entry.totalshares;
               }
-              entry.capitalgainloss = ((+entry.price * +entry.quantity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quantity);
+              entry.capitalgainloss = ((entry.price * entry.quantity) - entry.commission) - (lastEntry.acbperunit * entry.quantity);
             }
             Entries.updateEntry(entry);
             listOfModifiedEntries.push(entry);

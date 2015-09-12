@@ -55,15 +55,16 @@ api.put '/api/entriesList', (req, res) ->
 module.exports = api
 
 
+# todo: problem with only recalcuating below where an enty is moved to
 calculateEntries = (insertedEntry, reCalculateAll) ->
     stockName = insertedEntry.stockName
     Entries.getEntriesForStockOrdered(stockName).then (entriesList) ->
         StockList.getStockByName(stockName).then (initialValues) ->
             lastEntry = {
-                quantity: +initialValues.number
-                totalshares: +initialValues.number
-                acbperunit: +initialValues.number == 0 ? 0 : +initialValues.acb / +initialValues.number
-                acbtotal: +initialValues.acb
+                quantity: initialValues.number
+                totalshares: initialValues.number
+                acbperunit: initialValues.number == 0 ? 0 : initialValues.acb / initialValues.number
+                acbtotal: initialValues.acb
             }
             going = reCalculateAll
             listOfModifiedEntries = []
@@ -72,19 +73,19 @@ calculateEntries = (insertedEntry, reCalculateAll) ->
                     going = true
 
                     if entry.buysell == 'buy'
-                        entry.totalshares = +lastEntry.totalshares + +entry.quantity
-                        entry.acbtotal = +lastEntry.acbtotal + (+entry.price * +entry.quantity) + +entry.commission
-                        entry.acbperunit = +entry.acbtotal / +entry.totalshares
+                        entry.totalshares = lastEntry.totalshares + entry.quantity
+                        entry.acbtotal = lastEntry.acbtotal + (entry.price * entry.quantity) + entry.commission
+                        entry.acbperunit = entry.acbtotal / entry.totalshares
                     else if entry.buysell == 'sell'
-                        entry.totalshares = +lastEntry.totalshares - +entry.quantity
+                        entry.totalshares = lastEntry.totalshares - entry.quantity
                         entry.problem = true if entry.totalshares < 0
                         if entry.totalshares == 0
                             entry.acbtotal = 0
                             entry.acbperunit = 0
                         else
-                            entry.acbtotal = +lastEntry.getACBTotal - (+entry.quantity * +lastEntry.acbtotal / +lastEntry.totalshares)
-                            entry.acbperunit = +entry.acbtotal / +entry.totalshares
-                        entry.capitalgainloss = ((+entry.price * +entry.quantity) - +entry.commission) - (+lastEntry.acbperunit * +entry.quantity)
+                            entry.acbtotal = lastEntry.getACBTotal - (entry.quantity * lastEntry.acbtotal / lastEntry.totalshares)
+                            entry.acbperunit = entry.acbtotal / entry.totalshares
+                        entry.capitalgainloss = ((entry.price * entry.quantity) - entry.commission) - (lastEntry.acbperunit * entry.quantity)
                     Entries.updateEntry(entry)
                     listOfModifiedEntries.push(entry)
                 lastEntry = entry
