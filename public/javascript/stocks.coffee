@@ -1,27 +1,27 @@
-stockListApp = angular.module('stockListApp', [])
+stocksApp = angular.module('stocksApp', [])
 
 
-stockListApp.filter 'moneyFilter', ->
+stocksApp.filter 'moneyFilter', ->
   (number) ->
     if not number then '$0.00' else '$' + number
 
 
 # todo: make the stockname and initial values editable
-stockListApp.controller 'StockListController', ($scope, $http) ->
+stocksApp.controller 'StocksController', ($scope, $http) ->
 
     $scope.add = ->
-        $http.post('/api/stockList?stock=' + JSON.stringify($scope.newStock)).then (addedStock) ->
-            $scope.stockList.push(addedStock.data)
+        $http.post('/api/stocks?stock=' + JSON.stringify($scope.newStock)).then (addedStock) ->
+            $scope.stocks.push(addedStock.data)
             resetNewStock()
             refocusForm()
 
     $scope.remove = (stockName) ->
-        $http.delete('/api/stockList?stockName=' + stockName)
+        $http.delete('/api/stocks?stockName=' + stockName)
         (
             if stock.stockName == stockName
-                $scope.stockList.splice(index, 1)
+                $scope.stocks.splice(index, 1)
                 break
-        ) for stock, index in $scope.stockList
+        ) for stock, index in $scope.stocks
         $scope.validate($scope.newStock)
         refocusForm()
         return
@@ -35,7 +35,7 @@ stockListApp.controller 'StockListController', ($scope, $http) ->
     resetErrors = -> $scope.errors = []
     resetNewStock = -> $scope.newStock = {}
     refocusForm = -> $('#newStockAutofocusElement').focus()
-    alreadyHaveStock = (testStock) -> (return true if stock.stockName == testStock.stockName) for stock in $scope.stockList; false
+    alreadyHaveStock = (testStock) -> (return true if stock.stockName == testStock.stockName) for stock in $scope.stocks; false
 
 
-    $http.get('/api/stockList').then (stockList) -> $scope.stockList = stockList.data
+    $http.get('/api/stocks').then (stocks) -> $scope.stocks = stocks.data

@@ -7,11 +7,11 @@ block content
     div(ng-app='debugApp')
 
         h2 Stock List
-        div(ng-controller='StockListController')
+        div(ng-controller='StocksController')
             table
                 each header in ['#','Name','Number','ACB']
                     th= header
-                tr(ng-repeat='stock in stockList')
+                tr(ng-repeat='stock in stocks')
                     td.center {{$index + 1}}
                     td {{stock.stockName}}
                     td {{stock.number}}

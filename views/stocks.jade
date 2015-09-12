@@ -1,13 +1,13 @@
 extends layout
 
 block content
-    script(type='text/javascript' src='/javascript/stocklist.js')
-    div(ng-app='stockListApp' ng-controller='StockListController')
+    script(type='text/javascript' src='/javascript/stocks.js')
+    div(ng-app='stocksApp' ng-controller='StocksController')
         table
             thead
                 th(ng-repeat="header in ['#','Name','Number','ACB','Function']" ng-bind='header')
 
-            tbody(ng-repeat="stock in stockList | orderBy: 'stockName'")
+            tbody(ng-repeat="stock in stocks | orderBy: 'stockName'")
 
                 tr
                     td.center(ng-bind='$index + 1')
@@ -21,7 +21,7 @@ block content
             tbody
                 tr(ng-hide='editStock._id')
                     form(ng-submit='add()')
-                        td.input.center(ng-bind='stockList.length + 1')
+                        td.input.center(ng-bind='stocks.length + 1')
                         td.input
                             input(ng-model='newStock.stockName' type='text' oninput='this.value=this.value.toUpperCase()' ng-minlength='3' placeholder='Name' id='newStockAutofocusElement' autofocus required)
                         td.input

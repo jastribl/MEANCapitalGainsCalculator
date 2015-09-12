@@ -1,25 +1,25 @@
 express = require('express')
 api = express.Router()
-StockList = require('../models/StockList')
+Stocks = require('../models/Stocks')
 Entries = require('../models/Entries')
 
 
-api.get '/api/stockList', (req, res) ->
-    StockList.getStockList().then (stockList) ->
-        res.json stockList
+api.get '/api/stocks', (req, res) ->
+    Stocks.getStocks().then (Stocks) ->
+        res.json Stocks
 
-api.delete '/api/stockList', (req, res) ->
+api.delete '/api/stocks', (req, res) ->
     stockName = req.query.stockName
-    StockList.deleteStockWithName(stockName).then ->
+    Stocks.deleteStockWithName(stockName).then ->
         Entries.deleteAllEntriesForStockWithName(stockName).then ->
             res.sendStatus(200)
 
-api.post '/api/stockList', (req, res) ->
+api.post '/api/stocks', (req, res) ->
     stock = JSON.parse(req.query.stock)
     stock.stockName = stock.stockName.toUpperCase()
     stock.number = 0 if not stock.number
     stock.acb = 0 if not stock.acb
-    StockList.addStock(stock).then ->
+    Stocks.addStock(stock).then ->
         res.json stock
 
 
@@ -59,7 +59,7 @@ module.exports = api
 calculateEntries = (insertedEntry, reCalculateAll) ->
     stockName = insertedEntry.stockName
     Entries.getEntriesForStockOrdered(stockName).then (entriesList) ->
-        StockList.getStockByName(stockName).then (initialValues) ->
+        Stocks.getStockByName(stockName).then (initialValues) ->
             lastEntry = {
                 quantity: initialValues.number
                 totalshares: initialValues.number

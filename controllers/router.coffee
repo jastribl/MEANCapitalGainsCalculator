@@ -1,17 +1,17 @@
 express = require('express')
 router = express.Router()
 api = require('./api')
-StockList = require('../models/StockList')
+Stocks = require('../models/Stocks')
 
 
 router.use(api)
 
-router.get '/stocklist', (req, res) ->
-    res.render('stocklist', {title: 'Stock List'})
+router.get '/stocks', (req, res) ->
+    res.render('stocks', {title: 'Stock List'})
 
 router.get '/stock', (req, res) ->
     stockName = req.query.stockName.toUpperCase()
-    StockList.doesStockWithNameExist(stockName).then (stockExists) ->
+    Stocks.doesStockWithNameExist(stockName).then (stockExists) ->
         if stockExists
             res.render('stock', {title: stockName})
         else

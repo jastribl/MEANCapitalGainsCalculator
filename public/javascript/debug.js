@@ -14,9 +14,9 @@
     };
   });
 
-  debugApp.controller('StockListController', function($scope, $http) {
-    return $http.get('/api/stockList').then(function(stockList) {
-      return $scope.stockList = stockList.data;
+  debugApp.controller('StocksController', function($scope, $http) {
+    return $http.get('/api/stocks').then(function(stocks) {
+      return $scope.stocks = stocks.data;
     });
   });
 

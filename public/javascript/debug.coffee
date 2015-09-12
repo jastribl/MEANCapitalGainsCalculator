@@ -6,9 +6,9 @@ debugApp.filter 'moneyFilter', ->
         if not number then '$0.00' else '$' + number
 
 
-debugApp.controller 'StockListController', ($scope, $http) ->
-    $http.get('/api/stockList').then (stockList) ->
-        $scope.stockList = stockList.data
+debugApp.controller 'StocksController', ($scope, $http) ->
+    $http.get('/api/stocks').then (stocks) ->
+        $scope.stocks = stocks.data
 
 
 debugApp.controller 'EntriesListController', ($scope, $http) ->
