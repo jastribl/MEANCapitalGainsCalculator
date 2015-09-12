@@ -23,10 +23,12 @@ Entries = {
         entriesTable.remove {_id: _id}, (err) ->
             throw err if err
 
+    # todo: only save the expected parts of the entry
     addEntry: (entry) ->
         entriesTable.insert(entry).then ->
             findEntry(entry)
 
+    # todo: only save the expected parts of the entry
     updateEntry: (entry) ->
         entriesTable.update {_id: entry._id}, entry, (err) ->
             throw err if err

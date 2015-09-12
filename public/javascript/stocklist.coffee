@@ -6,6 +6,7 @@ stockListApp.filter 'moneyFilter', ->
     if not number then '$0.00' else '$' + number
 
 
+# todo: make the stockname and initial values editable
 stockListApp.controller 'StockListController', ($scope, $http) ->
 
     $scope.add = ->
