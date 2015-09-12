@@ -110,6 +110,9 @@
               entry.totalshares = lastEntry.totalshares + entry.quantity;
               entry.acbtotal = lastEntry.acbtotal + (entry.price * entry.quantity) + entry.commission;
               entry.acbperunit = entry.acbtotal / entry.totalshares;
+              if (entry.capitalgainloss) {
+                delete entry.capitalgainloss;
+              }
             } else if (entry.buysell === 'sell') {
               entry.totalshares = lastEntry.totalshares - entry.quantity;
               if (entry.totalshares < 0) {
