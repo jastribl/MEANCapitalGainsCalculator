@@ -20,8 +20,8 @@ Stocks = {
         stocksTable.count('stockName': stockName).then (count) ->
             count != 0
 
-    # todo: sanitize entry (possibly)
     addStock: (stock) ->
+        stock = sanitizeStock(stock)
         stocksTable.insert(stock)
 
     deleteStockWithName: (stockName) ->
@@ -31,3 +31,11 @@ Stocks = {
 
 
 module.exports = Stocks
+
+
+sanitizeStock = (stock) ->
+    {
+        stockName: stock.stockName
+        number: stock.number
+        acb: stock.acb
+    }

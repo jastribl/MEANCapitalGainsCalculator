@@ -24,18 +24,17 @@ Entries = {
             throw err if err
             foundEntry
 
-    # todo: have this send back the removed entry (possibly)
     removeEntryById: (_id) ->
         entriesTable.remove {_id: _id}, (err) ->
             throw err if err
 
-    # todo: sanitize entry (possibly)
     addEntry: (entry) ->
+        entry = sanitizeEntry(entry)
         entriesTable.insert(entry).then ->
             findEntry(entry)
 
-    # todo: sanitize entry (possibly)
     updateEntry: (entry) ->
+        entry = sanitizeEntry(entry)
         entriesTable.update {_id: entry._id}, entry, (err) ->
             throw err if err
 
@@ -45,6 +44,24 @@ Entries = {
 
 module.exports = Entries
 
+
+sanitizeEntry = (entry) ->
+    {
+        stockName: entry.stockName
+        _id: entry._id
+        year: entry.year
+        month: entry.month
+        day: entry.day
+        tradeNumber: entry.tradeNumber
+        buysell: entry.buysell
+        quantity: entry.quantity
+        price: entry.price
+        commission: entry.commission
+        totalshares: entry.totalshares
+        acbperunit: entry.acbperunit
+        acbtotal: entry.acbtotal
+        capitalgainloss: entry.capitalgainloss
+    }
 
 findEntry = (entry) ->
     entriesTable.findOne {stockName: entry.stockName, year: entry.year, month: entry.month, day: entry.day, tradeNumber: entry.tradeNumber}, (err, foundEntry) ->

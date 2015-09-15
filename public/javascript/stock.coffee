@@ -1,5 +1,5 @@
 stockApp = angular.module('stockApp', [])
-
+# todo: rename all "Stock" classes and files to "Entries" to match "Stocks"
 
 stockApp.filter 'moneyFilter', ->
     (number) ->
