@@ -39,25 +39,26 @@ api.post '/api/entriesList', (req, res) ->
             res.json changedEntries
 
 api.delete '/api/entriesList', (req, res) ->
-    entry = JSON.parse(req.query.entry)
-    Entries.removeEntryById(entry._id).then ->
-        # todo: make this so it does not need to send everything back
-        calculateEntries(entry, true).then (changedEntries) ->
-            res.json changedEntries
+    entryToDelete = JSON.parse(req.query.entry)
+    Entries.getEntryById(entryToDelete._id).then (removedEntry) ->
+        Entries.removeEntryById(entryToDelete._id).then ->
+            calculateEntries(removedEntry).then (changedEntries) ->
+                res.json changedEntries
 
 api.put '/api/entriesList', (req, res) ->
-    entry = JSON.parse(req.query.entry)
-    Entries.updateEntry(entry).then (updatedEntry) ->
-        calculateEntries(updatedEntry).then (changedEntries) ->
+    modifiedEntry = JSON.parse(req.query.entry)
+    Entries.getEntryById(modifiedEntry._id).then (removedEntry) ->
+        entryToSend = if aGEQb(modifiedEntry, removedEntry) then removedEntry else modifiedEntry
+        Entries.updateEntry(modifiedEntry)
+        calculateEntries(entryToSend).then (changedEntries) ->
             res.json changedEntries
 
 
 module.exports = api
 
 
-# todo: problem with only recalcuating below where an enty is moved to
-calculateEntries = (insertedEntry, reCalculateAll) ->
-    stockName = insertedEntry.stockName
+calculateEntries = (startAtEntry) ->
+    stockName = startAtEntry.stockName
     Entries.getEntriesForStockOrdered(stockName).then (entriesList) ->
         Stocks.getStockByName(stockName).then (initialValues) ->
             lastEntry = {
@@ -66,10 +67,10 @@ calculateEntries = (insertedEntry, reCalculateAll) ->
                 acbperunit: initialValues.number == 0 ? 0 : initialValues.acb / initialValues.number
                 acbtotal: initialValues.acb
             }
-            going = reCalculateAll
+            going = false
             listOfModifiedEntries = []
             entriesList.forEach (entry) ->
-                if going or entry._id.toString() == insertedEntry._id.toString()
+                if going or aGEQb(entry, startAtEntry)
                     going = true
 
                     if entry.buysell == 'buy'
@@ -91,3 +92,15 @@ calculateEntries = (insertedEntry, reCalculateAll) ->
                     listOfModifiedEntries.push(entry)
                 lastEntry = entry
             return listOfModifiedEntries
+
+# todo: too complicated (possibly convert all dates to date-tick)
+aGEQb = (a, b) ->
+    if a.year > b.year
+        return true
+    else if a.month > b.month
+        return true
+    else if a.day > b.day
+        return true
+    else if a.tradeNumber >= b.tradeNumber
+        return true
+    return false

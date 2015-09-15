@@ -20,7 +20,7 @@ Stocks = {
         stocksTable.count('stockName': stockName).then (count) ->
             count != 0
 
-    # todo: only save the expected parts of the stock
+    # todo: sanitize entry (possibly)
     addStock: (stock) ->
         stocksTable.insert(stock)
 

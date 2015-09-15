@@ -34,20 +34,14 @@ stockApp.controller 'StockController', ($scope, $http) ->
 
     $scope.add = ->
         $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then (updatedEntries) ->
-            (
-                removeEntryById(updatedEntry._id)
-                addEntry(updatedEntry)
-            ) for updatedEntry in updatedEntries.data
+            updateEntries(updatedEntries.data)
             resetForm()
             refocusForm()
 
     $scope.remove = (entry) ->
         $http.delete('/api/entriesList?entry=' + JSON.stringify(entry)).then (updatedEntries) ->
             removeEntryById(entry._id)
-            (
-                removeEntryById(updatedEntry._id)
-                addEntry(updatedEntry)
-            ) for updatedEntry in updatedEntries.data
+            updateEntries(updatedEntries.data)
             adjustTradeNumbers()
             refocusForm()
 
@@ -55,10 +49,7 @@ stockApp.controller 'StockController', ($scope, $http) ->
 
     $scope.confirmEdit = ->
         $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then (updatedEntries) ->
-            (
-                removeEntryById(updatedEntry._id)
-                addEntry(updatedEntry)
-            ) for updatedEntry in updatedEntries.data
+            updateEntries(updatedEntries.data)
             delete $scope.editEntry
             refocusForm()
 
@@ -77,6 +68,12 @@ stockApp.controller 'StockController', ($scope, $http) ->
                 break
         ) for entry, index in $scope.entriesList
         return
+
+    updateEntries = (updatedEntries) ->
+        (
+            removeEntryById(updatedEntry._id)
+            addEntry(updatedEntry)
+        ) for updatedEntry in updatedEntries
 
     resetForm = ->
         adjustTradeNumbers()

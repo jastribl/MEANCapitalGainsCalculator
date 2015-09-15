@@ -41,6 +41,16 @@
         return entries;
       });
     },
+    getEntryById: function(_id) {
+      return entriesTable.findOne({
+        _id: _id
+      }, function(err, foundEntry) {
+        if (err) {
+          throw err;
+        }
+        return foundEntry;
+      });
+    },
     removeEntryById: function(_id) {
       return entriesTable.remove({
         _id: _id
@@ -62,8 +72,6 @@
         if (err) {
           throw err;
         }
-      }).then(function() {
-        return findEntry(entry);
       });
     }
   };

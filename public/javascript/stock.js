@@ -15,7 +15,7 @@
   });
 
   stockApp.controller('StockController', function($scope, $http) {
-    var addEntry, adjustTradeNumbers, i, j, ref, refocusForm, removeEntryById, resetForm, results, results1;
+    var addEntry, adjustTradeNumbers, i, j, ref, refocusForm, removeEntryById, resetForm, results, results1, updateEntries;
     $scope.years = (function() {
       results = [];
       for (var i = 2000, ref = new Date().getFullYear() + 1; 2000 <= ref ? i <= ref : i >= ref; 2000 <= ref ? i++ : i--){ results.push(i); }
@@ -63,27 +63,15 @@
     };
     $scope.add = function() {
       return $http.post('/api/entriesList?entry=' + JSON.stringify($scope.newEntry)).then(function(updatedEntries) {
-        var k, len, ref1, updatedEntry;
-        ref1 = updatedEntries.data;
-        for (k = 0, len = ref1.length; k < len; k++) {
-          updatedEntry = ref1[k];
-          removeEntryById(updatedEntry._id);
-          addEntry(updatedEntry);
-        }
+        updateEntries(updatedEntries.data);
         resetForm();
         return refocusForm();
       });
     };
     $scope.remove = function(entry) {
       return $http["delete"]('/api/entriesList?entry=' + JSON.stringify(entry)).then(function(updatedEntries) {
-        var k, len, ref1, updatedEntry;
         removeEntryById(entry._id);
-        ref1 = updatedEntries.data;
-        for (k = 0, len = ref1.length; k < len; k++) {
-          updatedEntry = ref1[k];
-          removeEntryById(updatedEntry._id);
-          addEntry(updatedEntry);
-        }
+        updateEntries(updatedEntries.data);
         adjustTradeNumbers();
         return refocusForm();
       });
@@ -93,13 +81,7 @@
     };
     $scope.confirmEdit = function() {
       return $http.put('/api/entriesList?entry=' + JSON.stringify($scope.editEntry)).then(function(updatedEntries) {
-        var k, len, ref1, updatedEntry;
-        ref1 = updatedEntries.data;
-        for (k = 0, len = ref1.length; k < len; k++) {
-          updatedEntry = ref1[k];
-          removeEntryById(updatedEntry._id);
-          addEntry(updatedEntry);
-        }
+        updateEntries(updatedEntries.data);
         delete $scope.editEntry;
         return refocusForm();
       });
@@ -121,6 +103,15 @@
           break;
         }
       }
+    };
+    updateEntries = function(updatedEntries) {
+      var k, len, results2, updatedEntry;
+      results2 = [];
+      for (k = 0, len = updatedEntries.length; k < len; k++) {
+        updatedEntry = updatedEntries[k];
+        results2.push((removeEntryById(updatedEntry._id), addEntry(updatedEntry)));
+      }
+      return results2;
     };
     resetForm = function() {
       adjustTradeNumbers();
